@@ -4,3 +4,4 @@ in-memoria.db
 in-memoria-vectors.db/
 .memoria-cache/
 *.memoria-db
+!.memory/

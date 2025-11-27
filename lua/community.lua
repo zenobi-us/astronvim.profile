@@ -8,5 +8,6 @@ return {
   "AstroNvim/astrocommunity",
   { import = "astrocommunity.pack.lua" },
   { import = "astrocommunity.ai.opencode-nvim" },
+  { import = "astrocommunity.motion.mini-move" },
   -- import/override with your plugins folder
 }

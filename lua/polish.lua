@@ -35,8 +35,3 @@ vim.keymap.set('i', '<Find>', '<C-o>^', { noremap = true, silent = true, desc = 
 
 -- Enable mouse support
 vim.opt.mouse = 'a'
-
--- Move visual selection up/down with Ctrl+Shift+Up/Down
--- These mappings work after mouse selection in visual mode
-vim.keymap.set('v', '<C-S-Up>', ":m '<-2<CR>gv=gv", { noremap = true, silent = true, desc = "Move selection up" })
-vim.keymap.set('v', '<C-S-Down>', ":m '>+1<CR>gv=gv", { noremap = true, silent = true, desc = "Move selection down" })
