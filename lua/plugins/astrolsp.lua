@@ -1,5 +1,3 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
 -- AstroLSP allows you to customize the features in AstroNvim's LSP configuration engine
 -- Configuration documentation can be found with `:h astrolsp`
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
@@ -85,6 +83,77 @@ return {
           function() vim.lsp.buf.declaration() end,
           desc = "Declaration of current symbol",
           cond = "textDocument/declaration",
+        },
+        gd = {
+          function() vim.lsp.buf.definition() end,
+          desc = "Definition of current symbol",
+          cond = "textDocument/definition",
+        },
+        gy = {
+          function() vim.lsp.buf.type_definition() end,
+          desc = "Type definition of current symbol",
+          cond = "textDocument/typeDefinition",
+        },
+        gK = {
+          function() vim.lsp.buf.signature_help() end,
+          desc = "Signature help",
+          cond = "textDocument/signatureHelp",
+        },
+        gl = {
+          function() vim.diagnostic.open_float() end,
+          desc = "Show diagnostics in float",
+        },
+        ["<Leader>li"] = {
+          function() vim.lsp.buf.hover() end,
+          desc = "Hover information",
+          cond = "textDocument/hover",
+        },
+        ["<Leader>lh"] = {
+          function() vim.lsp.buf.signature_help() end,
+          desc = "Signature help",
+          cond = "textDocument/signatureHelp",
+        },
+        ["<Leader>la"] = {
+          function() vim.lsp.buf.code_action() end,
+          desc = "Code action",
+          cond = "textDocument/codeAction",
+        },
+        ["<Leader>lA"] = {
+          function() vim.lsp.buf.code_action {
+            context = { only = { "source" } }
+          } end,
+          desc = "Source action",
+          cond = "textDocument/codeAction",
+        },
+        ["<Leader>lf"] = {
+          function() vim.lsp.buf.format { async = true } end,
+          desc = "Format buffer",
+          cond = "textDocument/formatting",
+        },
+        ["<Leader>lr"] = {
+          function() vim.lsp.buf.rename() end,
+          desc = "Rename current symbol",
+          cond = "textDocument/rename",
+        },
+        ["<Leader>lR"] = {
+          function() vim.lsp.buf.references() end,
+          desc = "Find all references",
+          cond = "textDocument/references",
+        },
+        ["<Leader>lG"] = {
+          function() vim.lsp.buf.workspace_symbol() end,
+          desc = "Search workspace symbols",
+          cond = "workspace/symbol",
+        },
+        ["<Leader>ll"] = {
+          function() vim.lsp.codelens.refresh() end,
+          desc = "Refresh code lenses",
+          cond = "textDocument/codeLens",
+        },
+        ["<Leader>lL"] = {
+          function() vim.lsp.codelens.run() end,
+          desc = "Run code lens",
+          cond = "textDocument/codeLens",
         },
         ["<Leader>uY"] = {
           function() require("astrolsp.toggles").buffer_semantic_tokens() end,

@@ -1,11 +1,34 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
--- You can also add or configure plugins by creating files in this `plugins/` folder
--- PLEASE REMOVE THE EXAMPLES YOU HAVE NO INTEREST IN BEFORE ENABLING THIS FILE
--- Here are some examples:
-
 ---@type LazySpec
 return {
+  -- Configure which-key to show LSP keymaps
+  {
+    "folke/which-key.nvim",
+    opts = {
+      spec = {
+        { "<leader>l", group = "LSP" },
+        { "<leader>la", desc = "Code action" },
+        { "<leader>lA", desc = "Source action" },
+        { "<leader>lf", desc = "Format buffer" },
+        { "<leader>lG", desc = "Search workspace symbols" },
+        { "<leader>lh", desc = "Signature help" },
+        { "<leader>li", desc = "Hover information" },
+        { "<leader>lL", desc = "Run code lens" },
+        { "<leader>ll", desc = "Refresh code lenses" },
+        { "<leader>lr", desc = "Rename symbol" },
+        { "<leader>lR", desc = "Find all references" },
+      },
+    },
+  },
+
+  -- Ctrl+Click for goto definition
+  {
+    "neovim/nvim-lspconfig",
+    init = function()
+      vim.keymap.set('n', '<C-LeftMouse>', function()
+        vim.lsp.buf.definition()
+      end, { noremap = true, silent = true })
+    end,
+  },
 
   -- == Examples of Adding Plugins ==
 
@@ -21,26 +44,28 @@ return {
   -- customize dashboard options
   {
     "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
     opts = {
       dashboard = {
-        preset = {
-          header = table.concat({
-            " █████  ███████ ████████ ██████   ██████ ",
-            "██   ██ ██         ██    ██   ██ ██    ██",
-            "███████ ███████    ██    ██████  ██    ██",
-            "██   ██      ██    ██    ██   ██ ██    ██",
-            "██   ██ ███████    ██    ██   ██  ██████ ",
-            "",
-            "███    ██ ██    ██ ██ ███    ███",
-            "████   ██ ██    ██ ██ ████  ████",
-            "██ ██  ██ ██    ██ ██ ██ ████ ██",
-            "██  ██ ██  ██  ██  ██ ██  ██  ██",
-            "██   ████   ████   ██ ██      ██",
-          }, "\n"),
+        sections = {
+          {
+            section = "terminal",
+            cmd = "mise x -- pokemon-go-colorscripts --name glalie --no-title",
+            random = 10,
+            pane = 1,
+            indent = 19,
+            height = 20,
+          },
+          { section = "keys", gap = 1, padding = 1 },
+          { section = "startup" },
         },
       },
     },
   },
+
+  -- Disable built-in alpha dashboard
+  { "goolord/alpha-nvim", enabled = false },
 
   -- You can disable default plugins as follows:
   { "max397574/better-escape.nvim", enabled = false },

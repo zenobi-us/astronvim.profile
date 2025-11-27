@@ -1,0 +1,6 @@
+# In-Memoria intelligence database and cache
+.memoria/
+in-memoria.db
+in-memoria-vectors.db/
+.memoria-cache/
+*.memoria-db

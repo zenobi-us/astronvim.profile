@@ -1,5 +1,3 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
 -- AstroCore provides a central place to modify mappings, vim options, autocommands, and more!
 -- Configuration documentation can be found with `:h astrocore`
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
@@ -45,6 +43,8 @@ return {
         spell = false, -- sets vim.opt.spell
         signcolumn = "yes", -- sets vim.opt.signcolumn to yes
         wrap = false, -- sets vim.opt.wrap
+        modeline = true, -- enable modeline parsing
+        modelines = 5, -- check first/last 5 lines for modelines
       },
       g = { -- vim.g.<key>
         -- configure global vim variables (vim.g)
@@ -73,12 +73,34 @@ return {
           desc = "Close buffer from tabline",
         },
 
+        -- save file
+        ["<C-S>"] = { function() vim.cmd.write() end, desc = "Save file" },
+
+        -- close tab without saving
+        ["<C-W>"] = { function() vim.cmd.quit() end, desc = "Close tab" },
+
+        -- Word jump with Ctrl+Arrow
+        ["<C-Left>"] = { "b", desc = "Jump to previous word start" },
+        ["<C-Right>"] = { "w", desc = "Jump to next word start" },
+
+        -- Disable default window resize mappings
+        ["<C-Up>"] = false,
+        ["<C-Down>"] = false,
+
         -- tables with just a `desc` key will be registered with which-key if it's installed
         -- this is useful for naming menus
         -- ["<Leader>b"] = { desc = "Buffers" },
 
         -- setting a mapping to false will disable it
         -- ["<C-S>"] = false,
+      },
+      i = {
+        -- save file in insert mode without leaving insert mode
+        ["<C-S>"] = { function() vim.api.nvim_command("write") end, desc = "Save file" },
+
+        -- Word jump with Ctrl+Arrow in insert mode
+        ["<C-Left>"] = { "<C-o>b", desc = "Jump to previous word start" },
+        ["<C-Right>"] = { "<C-o>w", desc = "Jump to next word start" },
       },
     },
   },
