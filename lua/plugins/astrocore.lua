@@ -76,8 +76,30 @@ return {
         -- save file
         ["<C-S>"] = { function() vim.cmd.write() end, desc = "Save file" },
 
-        -- close tab without saving
-        ["<C-W>"] = { function() vim.cmd.quit() end, desc = "Close tab" },
+        -- close buffer without quitting neovim, show dashboard if last buffer
+        ["<C-W>"] = {
+          function()
+            local buf = require("astrocore.buffer")
+            -- Get list of normal buffers (not special/hidden ones)
+            local normal_bufs = vim.tbl_filter(function(b)
+              return vim.bo[b].buflisted and vim.bo[b].buftype == ""
+            end, vim.api.nvim_list_bufs())
+            
+            -- If this is the last normal buffer, close it and open dashboard
+            if #normal_bufs <= 1 then
+              buf.close()
+              -- Small delay to let buffer close, then open dashboard
+              vim.defer_fn(function()
+                if pcall(require, "snacks") then
+                  require("snacks").dashboard.open()
+                end
+              end, 10)
+            else
+              buf.close()
+            end
+          end,
+          desc = "Close buffer"
+        },
 
         -- Word jump with Ctrl+Arrow
         ["<C-Left>"] = { "b", desc = "Jump to previous word start" },
