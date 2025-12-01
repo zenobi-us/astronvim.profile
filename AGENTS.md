@@ -67,7 +67,7 @@ memoria_get_pattern_recommendations(problemDescription="create new service class
 ## Execution Steps
 
 0. always read `.memory/summary.md` first to understand successful outcomes so far.
-1. update `.memory/team.md` to indicate which phase is being worked on and by whom.
+1. update `.memory/team.md` to indicate which phase is being worked on and by whom (use the session id to indicate this, not the agent name).
 2. If there are any `[NEEDS-HUMAN]` tasks in `.memory/todo.md`, stop and wait for human intervention.
 3. follow the research guidelines above.
 4. when you are blocked by actions that require human intervention, create a `.memory/todo.md` file listing the tasks that need to be done by a human. tag it with `[NEEDS-HUMAN]` on the task line.
