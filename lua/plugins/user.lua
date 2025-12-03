@@ -79,6 +79,10 @@ return {
           { section = "startup" },
         },
       },
+      -- Enable picker with vim.ui.select override for nice modal prompts
+      picker = {
+        ui_select = true,
+      },
     },
   },
 

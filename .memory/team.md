@@ -1,8 +1,10 @@
 # Team Status
 
 ## Current Phase
-All tasks completed - idle
+Idle - awaiting next task
 
-## Working On
-Agent: build
-Task: Memory cleanup complete, awaiting next task
+## Last Session
+- Fixed arrow key line wrapping (whichwrap option)
+- Fixed Home/End keys in normal mode
+- Changed to sequential line numbers
+- Added Snacks picker modal for unsaved buffer confirmation

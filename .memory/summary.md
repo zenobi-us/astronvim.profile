@@ -1,57 +1,71 @@
 # Neovim Configuration Summary
 
-## Issue 1 (RESOLVED) - Terminal Key Codes
-- End key in insert mode was inserting "<Select>" 
-- Home key in insert mode was inserting "<Find>"
-- Using Alacritty terminal
-- AstroNvim-based configuration
+## Configuration Location
+All key mappings are in `lua/plugins/astrocore.lua` under the `mappings` section.
 
-### Root Cause
-Alacritty terminal sends non-standard key codes (`<Select>` for End, `<Find>` for Home) that Neovim doesn't automatically recognize. This required explicit key mappings.
+## Resolved Issues
 
-### Solution Implemented
-Added explicit key mappings in polish.lua to handle terminal key code issues:
-- Mapped `<Select>` (what Alacritty sends for End) to `<C-o>$` (move to end of line)
-- Mapped `<Find>` (what Alacritty sends for Home) to `<C-o>^` (move to first non-blank)
-- Also added standard `<End>` and `<Home>` mappings
-- Added escape sequence mappings for application cursor mode
+### Terminal Key Codes (Alacritty)
+Alacritty sends non-standard key codes that require explicit mappings:
+- `<Find>` → Home key
+- `<Select>` → End key
 
-The fix uses `<C-o>` to execute a single normal mode command without leaving insert mode.
+**Solution** (astrocore.lua):
+- Insert mode: `<Find>`/`<Home>` → `<C-o>^`, `<Select>`/`<End>` → `<C-o>$`
+- Normal mode: `<Find>`/`<Home>` → `^`, `<Select>`/`<End>` → `$`
 
-## Issue 2 (RESOLVED) - Visual Mode Line Movement
-- User wants to use mouse to select lines and move them with Ctrl+Shift+Up/Down
-- Requires mouse support and visual mode mappings
+### Arrow Key Line Wrapping
+Arrow keys now wrap across lines in insert mode.
 
-### Solution Implemented (lua/polish.lua:36-42)
-- Enabled mouse support: `vim.opt.mouse = 'a'`
-- Added `<C-S-Up>` in visual mode: moves selected lines up with `:m '<-2<CR>gv=gv`
-- Added `<C-S-Down>` in visual mode: moves selected lines down with `:m '>+1<CR>gv=gv`
-- The `gv=gv` reselects and reindents after move
-- Verified working by user with story.md test file
+**Solution**: `whichwrap = "b,s,<,>,[,]"` in astrocore.lua options
 
-## Issue 3 (RESOLVED) - Close Buffer Without Quitting
-- `Ctrl+W` was mapped to `vim.cmd.quit()` which quits Neovim entirely
-- User wanted to close the current buffer tab without exiting Neovim
-- Enhanced: When closing the last buffer, show dashboard instead of empty screen
+### Close Buffer (Ctrl+W)
+Closes buffer without quitting Neovim. Shows dashboard when last buffer closes.
+Uses `vim.ui.select` (Snacks picker) for unsaved changes confirmation modal.
 
-### Root Cause
-`vim.cmd.quit()` closes the window, not the buffer. When the last window closes, Neovim quits regardless of remaining buffers.
+**Solution** (astrocore.lua:80-118):
+- Detects modified buffers, shows modal via `vim.ui.select`
+- Options: "Save and close", "Discard changes", "Cancel"
+- Uses `Snacks.bufdelete({ force = true })` after user choice
+- Opens dashboard if closing last buffer
 
-### Solution Implemented (lua/plugins/astrocore.lua:80-102)
-- Changed from `vim.cmd.quit()` to `require("astrocore.buffer").close()`
-- Detects if closing the last normal buffer (filters special buffers)
-- When last buffer closes, automatically opens Snacks.nvim dashboard
-- Uses `vim.defer_fn` with 10ms delay to ensure buffer closes before dashboard opens
-- Handles edge cases like modified buffers and last buffer scenarios
-- Verified working by user
+### Ctrl+Backspace Word Deletion
+Deletes whole word in insert/command mode.
 
-## Issue 4 (COMPLETED) - VSCode Diff Plugin Installation
-- User wanted to install vscode-diff.nvim plugin
-- Plugin not in AstroCommunity repository
+**Solution** (astrocore.lua):
+- `<C-BS>` → `<C-w>`
+- Also maps Alacritty escape sequence `\x1b[127;5u`
 
-### Solution Implemented (lua/plugins/vscode-diff.lua)
-- Created new plugin file for vscode-diff.nvim
-- Added nui.nvim dependency
-- Configured with default settings (colorscheme-aware highlights)
-- Plugin provides VSCode-style side-by-side diffs with two-tier highlighting
-- Auto-downloads pre-built C binaries (no compiler required)
+**Alacritty config** (`~/.config/alacritty/alacritty.toml`):
+```toml
+{ key = "Back", mods = "Control", chars = "\u001b[127;5u" }
+```
+
+### Line Numbers
+Sequential (absolute) line numbers by default.
+
+**Solution**: `relativenumber = false` in astrocore.lua options
+
+### Other Mappings
+- `<C-S>` - Save file (normal + insert mode)
+- `<C-Left>`/`<C-Right>` - Word jump (normal + insert mode)
+- Mouse support enabled: `vim.opt.mouse = 'a'` in polish.lua
+
+## Plugins
+
+### Snacks.nvim (lua/plugins/user.lua)
+- Dashboard with Pokemon terminal art
+- Picker with `ui_select = true` for modal confirmations
+
+### vscode-diff.nvim (lua/plugins/vscode-diff.lua)
+VSCode-style side-by-side diffs with two-tier highlighting.
+
+## Pending
+
+### AI Autocomplete
+Researched options in AstroCommunity:
+- **codeium-nvim** - Free option
+- **supermaven-nvim** - Best performance
+- **copilot** - Industry standard
+
+User to choose which to enable.

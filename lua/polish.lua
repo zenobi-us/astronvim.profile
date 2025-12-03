@@ -20,18 +20,5 @@ vim.keymap.set('v', '<C-f>', function()
   vim.fn.feedkeys('/', 'n')
 end, { noremap = true, silent = true })
 
--- Fix Home/End keys in insert mode (terminal key code issue)
--- Map both standard and application cursor key modes
-vim.keymap.set('i', '<End>', '<C-o>$', { noremap = true, silent = true, desc = "Move to end of line" })
-vim.keymap.set('i', '<Home>', '<C-o>^', { noremap = true, silent = true, desc = "Move to first non-blank character" })
-
--- Alacritty sends these escape sequences in application cursor mode
-vim.keymap.set('i', '<Esc>OF', '<C-o>$', { noremap = true, silent = true, desc = "End key (app mode)" })
-vim.keymap.set('i', '<Esc>OH', '<C-o>^', { noremap = true, silent = true, desc = "Home key (app mode)" })
-
--- Also try to catch the sequence that causes <Select>
-vim.keymap.set('i', '<Select>', '<C-o>$', { noremap = true, silent = true, desc = "Fix Select as End" })
-vim.keymap.set('i', '<Find>', '<C-o>^', { noremap = true, silent = true, desc = "Fix Find as Home" })
-
 -- Enable mouse support
 vim.opt.mouse = 'a'

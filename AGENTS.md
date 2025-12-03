@@ -80,3 +80,5 @@ memoria_get_pattern_recommendations(problemDescription="create new service class
 - print a large ascii box in chat indicating that human intervention is needed, and list the tasks from `.memory/todo.md` inside the box.
 - wait for human to complete the tasks before proceeding.
 
+
+ 

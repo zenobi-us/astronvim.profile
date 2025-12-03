@@ -38,13 +38,14 @@ return {
     -- vim options can be configured here
     options = {
       opt = { -- vim.opt.<key>
-        relativenumber = true, -- sets vim.opt.relativenumber
+        relativenumber = false, -- sets vim.opt.relativenumber
         number = true, -- sets vim.opt.number
         spell = false, -- sets vim.opt.spell
         signcolumn = "yes", -- sets vim.opt.signcolumn to yes
         wrap = false, -- sets vim.opt.wrap
         modeline = true, -- enable modeline parsing
         modelines = 5, -- check first/last 5 lines for modelines
+        whichwrap = "b,s,<,>,[,]", -- allow arrow keys to wrap across lines
       },
       g = { -- vim.g.<key>
         -- configure global vim variables (vim.g)
@@ -77,25 +78,46 @@ return {
         ["<C-S>"] = { function() vim.cmd.write() end, desc = "Save file" },
 
         -- close buffer without quitting neovim, show dashboard if last buffer
+        -- Uses vim.ui.select (which Snacks overrides) for a nice modal prompt
         ["<C-W>"] = {
           function()
-            local buf = require("astrocore.buffer")
+            local buf = vim.api.nvim_get_current_buf()
+            
             -- Get list of normal buffers (not special/hidden ones)
             local normal_bufs = vim.tbl_filter(function(b)
               return vim.bo[b].buflisted and vim.bo[b].buftype == ""
             end, vim.api.nvim_list_bufs())
+            local is_last_buffer = #normal_bufs <= 1
             
-            -- If this is the last normal buffer, close it and open dashboard
-            if #normal_bufs <= 1 then
-              buf.close()
-              -- Small delay to let buffer close, then open dashboard
-              vim.defer_fn(function()
-                if pcall(require, "snacks") then
+            local function close_buffer(save)
+              if save then
+                vim.cmd.write()
+              end
+              require("snacks").bufdelete({ buf = buf, force = true })
+              if is_last_buffer then
+                vim.defer_fn(function()
                   require("snacks").dashboard.open()
+                end, 10)
+              end
+            end
+            
+            -- If buffer is modified, show modal confirmation via vim.ui.select
+            if vim.bo[buf].modified then
+              local filename = vim.fn.fnamemodify(vim.fn.bufname(buf), ":t")
+              vim.ui.select(
+                { "Save and close", "Discard changes", "Cancel" },
+                { prompt = "Unsaved changes in " .. filename },
+                function(choice)
+                  if choice == "Save and close" then
+                    close_buffer(true)
+                  elseif choice == "Discard changes" then
+                    close_buffer(false)
+                  end
+                  -- Cancel or nil does nothing
                 end
-              end, 10)
+              )
             else
-              buf.close()
+              close_buffer(false)
             end
           end,
           desc = "Close buffer"
@@ -108,6 +130,12 @@ return {
         -- Disable default window resize mappings
         ["<C-Up>"] = false,
         ["<C-Down>"] = false,
+
+        -- Home/End keys (Alacritty sends <Find>/<Select> for these)
+        ["<Home>"] = { "^", desc = "Move to first non-blank" },
+        ["<End>"] = { "$", desc = "Move to end of line" },
+        ["<Find>"] = { "^", desc = "Home key (Alacritty)" },
+        ["<Select>"] = { "$", desc = "End key (Alacritty)" },
 
         -- tables with just a `desc` key will be registered with which-key if it's installed
         -- this is useful for naming menus
@@ -123,6 +151,23 @@ return {
         -- Word jump with Ctrl+Arrow in insert mode
         ["<C-Left>"] = { "<C-o>b", desc = "Jump to previous word start" },
         ["<C-Right>"] = { "<C-o>w", desc = "Jump to next word start" },
+
+        -- Delete whole word with Ctrl+Backspace (uses Vim's built-in CTRL-W)
+        -- Note: Requires Alacritty to send the escape sequence (see alacritty.toml)
+        ["<C-BS>"] = { "<C-w>", desc = "Delete word backward" },
+        -- Map the escape sequence that Alacritty sends for Ctrl+Backspace
+        ["\x1b[127;5u"] = { "<C-w>", desc = "Delete word backward (Alacritty)" },
+
+        -- Home/End keys (Alacritty sends <Find>/<Select> for these)
+        ["<Home>"] = { "<C-o>^", desc = "Move to first non-blank" },
+        ["<End>"] = { "<C-o>$", desc = "Move to end of line" },
+        ["<Find>"] = { "<C-o>^", desc = "Home key (Alacritty)" },
+        ["<Select>"] = { "<C-o>$", desc = "End key (Alacritty)" },
+      },
+      c = {
+        -- Delete whole word with Ctrl+Backspace in command mode
+        ["<C-BS>"] = { "<C-w>", desc = "Delete word backward" },
+        ["\x1b[127;5u"] = { "<C-w>", desc = "Delete word backward (Alacritty)" },
       },
     },
   },
