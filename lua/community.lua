@@ -8,5 +8,6 @@ return {
   { import = "astrocommunity.pack.lua" },
   { import = "astrocommunity.motion.mini-move" },
   { import = "astrocommunity.completion.copilot-lua-cmp" },
+  { import = "astrocommunity.search.grug-far-nvim" },
   -- import/override with your plugins folder
 }

@@ -2,23 +2,60 @@
 -- This is just pure lua so anything that doesn't
 -- fit in the normal config locations above can go here
 
--- Incremental search with highlighting on Ctrl+F
-vim.keymap.set('n', '<C-f>', function()
-  -- Start search mode with / which provides:
-  -- 1. Live highlighting as you type
-  -- 2. Jump to first match automatically
-  -- 3. All matches highlighted
-  vim.cmd('set hlsearch')
-  vim.cmd('set incsearch')
-  vim.fn.feedkeys('/', 'n')
-end, { noremap = true, silent = true })
+-- Helper function to get search term from selection, word under cursor, or empty
+local function get_grug_search_term()
+  -- Try to get selected text first
+  local mode = vim.fn.mode()
+  if mode == 'v' or mode == 'V' or mode == '\22' then
+    -- Visual mode - get selected text
+    vim.cmd('noau normal! "zy')
+    return vim.fn.getreg('z')
+  end
+  
+  -- Check if we're in insert mode or normal mode
+  if vim.fn.col('.') > 1 then
+    -- Get word under cursor
+    local word = vim.fn.expand('<cword>')
+    return word ~= '' and word or ''
+  end
+  
+  return ''
+end
 
--- Optional: Also configure visual mode search
+-- Grug search on Ctrl+F
+vim.keymap.set('n', '<C-f>', function()
+  local search_term = vim.fn.expand('<cword>')
+  require('grug-far').toggle_instance({
+    instanceName = 'main',
+    prefills = { search = search_term }
+  })
+end, { noremap = true, silent = true, desc = 'Toggle grug search' })
+
+-- Grug search in visual mode (use selected text)
 vim.keymap.set('v', '<C-f>', function()
-  vim.cmd('set hlsearch')
-  vim.cmd('set incsearch')
-  vim.fn.feedkeys('/', 'n')
-end, { noremap = true, silent = true })
+  vim.cmd('noau normal! "zy')
+  local search_term = vim.fn.getreg('z')
+  require('grug-far').toggle_instance({
+    instanceName = 'main',
+    prefills = { search = search_term }
+  })
+end, { noremap = true, silent = true, desc = 'Toggle grug search with selection' })
+
+-- Grug search and replace on Ctrl+Shift+F
+vim.keymap.set('n', '<C-S-f>', function()
+  local search_term = vim.fn.expand('<cword>')
+  require('grug-far').toggle_instance({
+    instanceName = 'main',
+    prefills = { search = search_term }
+  })
+end, { noremap = true, silent = true, desc = 'Toggle grug search and replace' })
+
+-- Grug search and replace in visual mode (use selected text)
+vim.keymap.set('v', '<C-S-f>', function()
+  vim.cmd('noau normal! "zy')
+  local search_term = vim.fn.getreg('z')
+  require('grug-far').open({ prefills = { search = search_term } })
+end, { noremap = true, silent = true, desc = 'Open grug search and replace with selection' })
 
 -- Clone current or selected lines (Ctrl+Shift+D)
 -- Normal mode: clone current line

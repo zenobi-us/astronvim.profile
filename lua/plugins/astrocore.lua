@@ -131,19 +131,23 @@ return {
         ["<C-Up>"] = false,
         ["<C-Down>"] = false,
 
-        -- Home/End keys (Alacritty sends <Find>/<Select> for these)
-        ["<Home>"] = { "^", desc = "Move to first non-blank" },
-        ["<End>"] = { "$", desc = "Move to end of line" },
-        ["<Find>"] = { "^", desc = "Home key (Alacritty)" },
-        ["<Select>"] = { "$", desc = "End key (Alacritty)" },
+         -- Home/End keys (Alacritty sends <Find>/<Select> for these)
+         ["<Home>"] = { "^", desc = "Move to first non-blank" },
+         ["<End>"] = { "$", desc = "Move to end of line" },
+         ["<Find>"] = { "^", desc = "Home key (Alacritty)" },
+         ["<Select>"] = { "$", desc = "End key (Alacritty)" },
 
-        -- tables with just a `desc` key will be registered with which-key if it's installed
-        -- this is useful for naming menus
-        -- ["<Leader>b"] = { desc = "Buffers" },
+         -- Delete whole word with Ctrl+Backspace in normal mode
+         ["<C-BS>"] = { "db", desc = "Delete word backward" },
+         ["\x1b[127;5u"] = { "db", desc = "Delete word backward (Alacritty)" },
 
-        -- setting a mapping to false will disable it
-        -- ["<C-S>"] = false,
-      },
+         -- tables with just a `desc` key will be registered with which-key if it's installed
+         -- this is useful for naming menus
+         -- ["<Leader>b"] = { desc = "Buffers" },
+
+         -- setting a mapping to false will disable it
+         -- ["<C-S>"] = false,
+       },
       i = {
         -- save file in insert mode without leaving insert mode
         ["<C-S>"] = { function() vim.api.nvim_command("write") end, desc = "Save file" },
