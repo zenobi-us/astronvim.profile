@@ -24,9 +24,7 @@ return {
   {
     "neovim/nvim-lspconfig",
     init = function()
-      vim.keymap.set('n', '<C-LeftMouse>', function()
-        vim.lsp.buf.definition()
-      end, { noremap = true, silent = true })
+      vim.keymap.set("n", "<C-LeftMouse>", function() vim.lsp.buf.definition() end, { noremap = true, silent = true })
     end,
   },
 
@@ -44,6 +42,19 @@ return {
         line_right = "<C-S-Right>",
         line_up = "<C-S-Up>",
         line_down = "<C-S-Down>",
+      },
+    },
+  },
+
+  -- Buffer mode manager - automatically switch to insert/normal mode based on buffer type
+  {
+    "mouse-peasant/buffermodes",
+    opts = {
+      buffer_modes = {
+        terminal = "insert",
+        toggleterm = "insert",
+        sidekick_terminal = "insert",
+        ["neo-tree"] = "normal",
       },
     },
   },
