@@ -48,13 +48,13 @@ return {
 
   -- Buffer mode manager - automatically switch to insert/normal mode based on buffer type
   {
-    dir = vim.fn.stdpath("config") .. "/lua/plugins/mouse-peasant",
+    dir = vim.fn.stdpath "config" .. "/lua/plugins/mouse-peasant",
     name = "buffermodes",
     opts = {
       buffer_modes = {
         terminal = "insert",
         toggleterm = "insert",
-        sidekick = "insert",
+        sidekick_terminal = "insert",
         ["neo-tree"] = "normal",
       },
     },
