@@ -1,1 +1,1 @@
-return require "buffermodes"
+return require "mousepeasant-buffermodes"

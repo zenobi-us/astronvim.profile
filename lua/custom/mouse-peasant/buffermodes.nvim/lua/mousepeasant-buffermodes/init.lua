@@ -13,6 +13,7 @@ M.opts = {
   buffer_modes = {},
 }
 
+-- This mapping allows users to be a bit lazy in how they specify modes
 local LOGICAL_MODE_MAPPING = {
   insert = "i",
   i = "i",
@@ -86,6 +87,8 @@ M.on_enter_buffer = function(props)
     )
     return
   end
+
+  astrocore.notify("BufferModes: Switching to " .. target_mode .. " mode", vim.log.levels.INFO)
 
   -- Apply the mode
   if mapped_mode == "i" then
