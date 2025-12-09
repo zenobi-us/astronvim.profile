@@ -13,17 +13,14 @@ return {
         "lua-language-server",
         "typescript-language-server",
         "eslint-lsp",
-
-        -- install formatters
-        "stylua",
-        "shfmt",
+        "json-lsp",
 
         -- install debuggers
         "debugpy",
-
-        -- install any other package
-        "tree-sitter-cli",
       },
+      -- Suppress errors for optional tools that may not be available
+      auto_update = true,
+      run_on_start = true,
     },
   },
 }

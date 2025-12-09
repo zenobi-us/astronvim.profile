@@ -93,15 +93,47 @@ return {
   { "max397574/better-escape.nvim", enabled = false },
 
   -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
-  {
-    "L3MON4D3/LuaSnip",
-    config = function(plugin, opts)
-      require "astronvim.plugins.configs.luasnip"(plugin, opts) -- include the default astronvim config that calls the setup call
-      -- add more custom luasnip configuration such as filetype extend or custom snippets
-      local luasnip = require "luasnip"
-      luasnip.filetype_extend("javascript", { "javascriptreact" })
-    end,
-  },
+   {
+     "L3MON4D3/LuaSnip",
+     config = function(plugin, opts)
+       require "astronvim.plugins.configs.luasnip"(plugin, opts) -- include the default astronvim config that calls the setup call
+       -- add more custom luasnip configuration such as filetype extend or custom snippets
+       local luasnip = require "luasnip"
+       luasnip.filetype_extend("javascript", { "javascriptreact" })
+     end,
+   },
+
+    -- Configure Copilot to use a specific Node.js version from mise
+    {
+      "zbirenbaum/copilot.lua",
+      opts = {
+        copilot_node_command = vim.fn.system("mise which --tool node@latest node"):gsub("\n", ""),
+        suggestion = {
+          enabled = true,
+          auto_trigger = true,
+          keymap = {
+            accept = "<C-Right>",
+            accept_word = false,
+            accept_line = false,
+            next = "<C-Down>",
+            prev = "<C-Up>",
+            dismiss = "<C-Backspace>",
+          },
+        },
+        filetypes = {
+          yaml = true,
+          yml = true,
+        },
+      },
+    },
+
+    -- Integrate Copilot with nvim-cmp
+    {
+      "zbirenbaum/copilot-cmp",
+      config = function()
+        require("copilot_cmp").setup()
+      end,
+    },
 
   {
     "windwp/nvim-autopairs",

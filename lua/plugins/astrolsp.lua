@@ -43,6 +43,33 @@ return {
     ---@diagnostic disable: missing-fields
     config = {
       -- clangd = { capabilities = { offsetEncoding = "utf-8" } },
+      jsonls = {
+        settings = {
+          json = {
+            schemas = {
+              -- Add your JSON schema associations here
+              -- Example format:
+              -- {
+              --   fileMatch = { "package.json" },
+              --   url = "https://json.schemastore.org/package.json"
+              -- },
+              {
+                fileMatch = { "tsconfig.json", "tsconfig.*.json" },
+                url = "https://json.schemastore.org/tsconfig.json"
+              },
+              {
+                fileMatch = { ".prettierrc", ".prettierrc.json" },
+                url = "https://json.schemastore.org/prettierrc.json"
+              },
+              {
+                fileMatch = { ".eslintrc", ".eslintrc.json" },
+                url = "https://json.schemastore.org/eslintrc.json"
+              },
+            },
+            validate = { enable = true }
+          }
+        }
+      }
     },
     -- customize how language servers are attached
     handlers = {
