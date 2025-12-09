@@ -17,6 +17,13 @@ require("lazy").setup({
   -- Configure any other `lazy.nvim` configuration options here
   install = { colorscheme = { "astrotheme", "habamax" } },
   ui = { backdrop = 100 },
+  dev = {
+    -- a function to return the local user nvim config path: <nvimconfig>/lua/custom
+    path = function() return vim.env.HOME .. "/.config/nvim/lua/custom" end,
+    patterns = {
+      "mouse-peasant", -- will load plugins in bufermode.nvim directory
+    },
+  },
   performance = {
     rtp = {
       -- disable some rtp plugins, add more to your liking

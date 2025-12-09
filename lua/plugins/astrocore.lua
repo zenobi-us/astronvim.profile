@@ -131,39 +131,55 @@ return {
         ["<C-Up>"] = false,
         ["<C-Down>"] = false,
 
-        -- Home/End keys (Alacritty sends <Find>/<Select> for these)
-        ["<Home>"] = { "^", desc = "Move to first non-blank" },
-        ["<End>"] = { "$", desc = "Move to end of line" },
-        ["<Find>"] = { "^", desc = "Home key (Alacritty)" },
-        ["<Select>"] = { "$", desc = "End key (Alacritty)" },
+         -- Home/End keys (Alacritty sends <Find>/<Select> for these)
+         ["<Home>"] = { "^", desc = "Move to first non-blank" },
+         ["<End>"] = { "$", desc = "Move to end of line" },
+         ["<Find>"] = { "^", desc = "Home key (Alacritty)" },
+         ["<Select>"] = { "$", desc = "End key (Alacritty)" },
 
-        -- tables with just a `desc` key will be registered with which-key if it's installed
-        -- this is useful for naming menus
-        -- ["<Leader>b"] = { desc = "Buffers" },
+         -- Delete whole word with Ctrl+Backspace in normal mode
+         ["<C-BS>"] = { "db", desc = "Delete word backward" },
+         ["\x1b[127;5u"] = { "db", desc = "Delete word backward (Alacritty)" },
 
-        -- setting a mapping to false will disable it
-        -- ["<C-S>"] = false,
-      },
-      i = {
-        -- save file in insert mode without leaving insert mode
-        ["<C-S>"] = { function() vim.api.nvim_command("write") end, desc = "Save file" },
+         -- tables with just a `desc` key will be registered with which-key if it's installed
+         -- this is useful for naming menus
+         -- ["<Leader>b"] = { desc = "Buffers" },
 
-        -- Word jump with Ctrl+Arrow in insert mode
-        ["<C-Left>"] = { "<C-o>b", desc = "Jump to previous word start" },
-        ["<C-Right>"] = { "<C-o>w", desc = "Jump to next word start" },
+         -- setting a mapping to false will disable it
+         -- ["<C-S>"] = false,
+       },
+       i = {
+         -- save file in insert mode without leaving insert mode
+         ["<C-S>"] = { function() vim.api.nvim_command("write") end, desc = "Save file" },
 
-        -- Delete whole word with Ctrl+Backspace (uses Vim's built-in CTRL-W)
-        -- Note: Requires Alacritty to send the escape sequence (see alacritty.toml)
-        ["<C-BS>"] = { "<C-w>", desc = "Delete word backward" },
-        -- Map the escape sequence that Alacritty sends for Ctrl+Backspace
-        ["\x1b[127;5u"] = { "<C-w>", desc = "Delete word backward (Alacritty)" },
+         -- Word jump with Ctrl+Arrow in insert mode
+         ["<C-Left>"] = { "<C-o>b", desc = "Jump to previous word start" },
+         ["<C-Right>"] = { "<C-o>w", desc = "Jump to next word start" },
 
-        -- Home/End keys (Alacritty sends <Find>/<Select> for these)
-        ["<Home>"] = { "<C-o>^", desc = "Move to first non-blank" },
-        ["<End>"] = { "<C-o>$", desc = "Move to end of line" },
-        ["<Find>"] = { "<C-o>^", desc = "Home key (Alacritty)" },
-        ["<Select>"] = { "<C-o>$", desc = "End key (Alacritty)" },
-      },
+         -- Delete whole word with Ctrl+Backspace (uses Vim's built-in CTRL-W)
+         -- Note: Requires Alacritty to send the escape sequence (see alacritty.toml)
+         ["<C-BS>"] = { "<C-w>", desc = "Delete word backward" },
+         -- Map the escape sequence that Alacritty sends for Ctrl+Backspace
+         ["\x1b[127;5u"] = { "<C-w>", desc = "Delete word backward (Alacritty)" },
+
+         -- Home/End keys (Alacritty sends <Find>/<Select> for these)
+         ["<Home>"] = { "<C-o>^", desc = "Move to first non-blank" },
+         ["<End>"] = { "<C-o>$", desc = "Move to end of line" },
+         ["<Find>"] = { "<C-o>^", desc = "Home key (Alacritty)" },
+         ["<Select>"] = { "<C-o>$", desc = "End key (Alacritty)" },
+
+         -- Text selection with Shift+Arrow keys (character/line at a time)
+         ["<S-Left>"] = { "<C-o>v<C-o>h", desc = "Select character left" },
+         ["<S-Right>"] = { "<C-o>v<C-o>l", desc = "Select character right" },
+         ["<S-Up>"] = { "<C-o>v<C-o>k", desc = "Select line up" },
+         ["<S-Down>"] = { "<C-o>v<C-o>j", desc = "Select line down" },
+
+         -- Text selection with Ctrl+Shift+Arrow keys (word/line at a time)
+         ["<C-S-Left>"] = { "<C-o>v<C-o>b", desc = "Select word left" },
+         ["<C-S-Right>"] = { "<C-o>v<C-o>w", desc = "Select word right" },
+         ["<C-S-Up>"] = { "<C-o>v<C-o>k", desc = "Select line up" },
+         ["<C-S-Down>"] = { "<C-o>v<C-o>j", desc = "Select line down" },
+       },
       c = {
         -- Delete whole word with Ctrl+Backspace in command mode
         ["<C-BS>"] = { "<C-w>", desc = "Delete word backward" },
