@@ -88,7 +88,9 @@ M.on_enter_buffer = function(props)
     return
   end
 
-  astrocore.notify("BufferModes: Switching to " .. target_mode .. " mode", vim.log.levels.INFO)
+  if M.opts.debug then
+    astrocore.notify("BufferModes: Changing buffer " .. bufnr .. " to " .. target_mode .. " mode", vim.log.levels.DEBUG)
+  end
 
   -- Apply the mode
   if mapped_mode == "i" then

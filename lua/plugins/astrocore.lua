@@ -138,16 +138,19 @@ return {
          ["<Select>"] = { "$", desc = "End key (Alacritty)" },
 
          -- Delete whole word with Ctrl+Backspace in normal mode
-         ["<C-BS>"] = { "db", desc = "Delete word backward" },
-         ["\x1b[127;5u"] = { "db", desc = "Delete word backward (Alacritty)" },
+          ["<C-BS>"] = { "db", desc = "Delete word backward" },
+          ["\x1b[127;5u"] = { "db", desc = "Delete word backward (Alacritty)" },
 
-         -- tables with just a `desc` key will be registered with which-key if it's installed
-         -- this is useful for naming menus
-         -- ["<Leader>b"] = { desc = "Buffers" },
+          -- Ctrl+Click to goto definition
+          ["<C-LeftMouse>"] = { function() vim.lsp.buf.definition() end, desc = "Goto definition" },
 
-         -- setting a mapping to false will disable it
-         -- ["<C-S>"] = false,
-       },
+          -- tables with just a `desc` key will be registered with which-key if it's installed
+          -- this is useful for naming menus
+          -- ["<Leader>b"] = { desc = "Buffers" },
+
+          -- setting a mapping to false will disable it
+          -- ["<C-S>"] = false,
+        },
        i = {
          -- save file in insert mode without leaving insert mode
          ["<C-S>"] = { function() vim.api.nvim_command("write") end, desc = "Save file" },
