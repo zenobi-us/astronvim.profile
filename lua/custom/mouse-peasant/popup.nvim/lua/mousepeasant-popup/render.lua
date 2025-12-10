@@ -1,4 +1,4 @@
-local Constants = require "user.core.popup.constants"
+local Constants = require "mousepeasant-popup.constants"
 
 local R = {}
 
@@ -30,19 +30,22 @@ R.label = function(item)
   -- do we show the command in the menu?
   local show_help = options.show_help or false
 
+  -- safely handle missing label
+  local label = item.label or ""
+
   -- calculate the padding from the original text of the label
-  local padding = width - #item.label
+  local padding = width - #label
 
   if padding < width then padding = width end
 
   if item.items ~= nil and options.submenu_indicator ~= nil then
     -- we'll add a ▸ to indicate it's a submenu
-    return item.label .. string.rep(" ", padding - #options.submenu_indicator) .. options.submenu_indicator
+    return label .. string.rep(" ", padding - #options.submenu_indicator) .. options.submenu_indicator
   end
 
-  if item.command == "<Nop>" or item.command == nil then return item.label .. string.rep(" ", padding) end
+  if item.command == "<Nop>" or item.command == nil then return label .. string.rep(" ", padding) end
 
-  return item.label .. string.rep(" ", padding - #item.command) .. (show_help and item.command or "")
+  return label .. string.rep(" ", padding - #item.command) .. (show_help and item.command or "")
 end
 
 -- should the menu item render or not
@@ -71,6 +74,9 @@ end
 
 R.menu_action = function(menu)
   if not R.should_menu_item_display(menu) then return end
+
+  -- skip if no command is defined
+  if not menu.command then return end
 
   -- create the menu entry for each mode
   for _, mode in ipairs(menu.modes or Constants.MODES) do

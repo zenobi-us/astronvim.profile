@@ -3,13 +3,13 @@
 -- @alias M
 local M = {}
 
-M.store = {}
+M.db = {}
 
 --- Register one or more items
 M._register = function(...)
   local items = { ... }
   for _, item in ipairs(items) do
-    table.insert(M.store, item)
+    table.insert(M.db, item)
   end
 end
 
@@ -27,6 +27,6 @@ end
 -- @see core.popup.render.clear_menu
 -- @usage
 -- popup.store.clear()
-M.clear = function() M.store = {} end
+M.clear = function() M.db = {} end
 
 return M

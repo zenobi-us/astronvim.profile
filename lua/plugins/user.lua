@@ -59,7 +59,27 @@ return {
       },
     },
   },
+  {
+    "mouse-peasant/popup.nvim",
+    dir = vim.env.HOME .. "/.config/nvim/lua/custom/mouse-peasant/popup.nvim",
+    opts = {
+      menus = {
+        require("plugins.popups.neotree").menu,
+      }
+    }
+  },
 
+  -- 
+  {
+  "nvim-neo-tree/neo-tree.nvim",
+  opts = {
+    source_selector = {
+      winbar = false,
+      statusline = false,
+    },
+    sources = { "filesystem", "document_symbols" },
+    },
+  },
   -- == Examples of Adding Plugins ==
 
   "andweeb/presence.nvim",

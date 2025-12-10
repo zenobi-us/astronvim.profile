@@ -1,4 +1,4 @@
-local Constants = require "user.core.popup.constants"
+local Constants = require "mousepeasant-popup.constants"
 local P = {}
 
 --- Check if the current buf has TreeSitter support
