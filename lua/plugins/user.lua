@@ -135,6 +135,7 @@ return {
         filetypes = {
           yaml = true,
           yml = true,
+          markdown = true,
         },
       },
     },
