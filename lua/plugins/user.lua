@@ -73,23 +73,25 @@ return {
   },
   {
     "mouse-peasant/popup.nvim",
+    event = "VeryLazy",
     dir = vim.env.HOME .. "/.config/nvim/lua/custom/mouse-peasant/popup.nvim",
     opts = {
       menus = {
-        require("plugins.popups.neotree").menu,
-      }
-    }
+        require("plugins.popups.neotree").menus,
+        -- require("plugins.popups.lsp").menus,
+      },
+    },
   },
 
-  -- 
+  --
   {
-  "nvim-neo-tree/neo-tree.nvim",
-  opts = {
-    source_selector = {
-      winbar = false,
-      statusline = false,
-    },
-    sources = { "filesystem", "document_symbols" },
+    "nvim-neo-tree/neo-tree.nvim",
+    opts = {
+      source_selector = {
+        winbar = false,
+        statusline = false,
+      },
+      sources = { "filesystem", "document_symbols" },
     },
   },
   -- == Examples of Adding Plugins ==
@@ -182,39 +184,47 @@ return {
         luasnip.filetype_extend("javascript", { "javascriptreact" })
       end,
     },
+  -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
+  {
+    "L3MON4D3/LuaSnip",
+    config = function(plugin, opts)
+      require "astronvim.plugins.configs.luasnip"(plugin, opts) -- include the default astronvim config that calls the setup call
+      -- add more custom luasnip configuration such as filetype extend or custom snippets
+      local luasnip = require "luasnip"
+      luasnip.filetype_extend("javascript", { "javascriptreact" })
+    end,
+  },
 
-    -- Configure Copilot to use a specific Node.js version from mise
-    {
-      "zbirenbaum/copilot.lua",
-      opts = {
-        copilot_node_command = vim.fn.system("mise which --tool node@latest node"):gsub("\n", ""),
-        suggestion = {
-          enabled = true,
-          auto_trigger = true,
-          keymap = {
-            accept = "<C-Right>",
-            accept_word = false,
-            accept_line = false,
-            next = "<C-Down>",
-            prev = "<C-Up>",
-            dismiss = "<C-Backspace>",
-          },
-        },
-        filetypes = {
-          yaml = true,
-          yml = true,
-          markdown = true,
+  -- Configure Copilot to use a specific Node.js version from mise
+  {
+    "zbirenbaum/copilot.lua",
+    opts = {
+      copilot_node_command = vim.fn.system("mise which --tool node@latest node"):gsub("\n", ""),
+      suggestion = {
+        enabled = true,
+        auto_trigger = true,
+        keymap = {
+          accept = "<C-Right>",
+          accept_word = false,
+          accept_line = false,
+          next = "<C-Down>",
+          prev = "<C-Up>",
+          dismiss = "<C-Backspace>",
         },
       },
+      filetypes = {
+        yaml = true,
+        yml = true,
+        markdown = true,
+      },
     },
+  },
 
-    -- Integrate Copilot with nvim-cmp
-    {
-      "zbirenbaum/copilot-cmp",
-      config = function()
-        require("copilot_cmp").setup()
-      end,
-    },
+  -- Integrate Copilot with nvim-cmp
+  {
+    "zbirenbaum/copilot-cmp",
+    config = function() require("copilot_cmp").setup() end,
+  },
 
   {
     "windwp/nvim-autopairs",

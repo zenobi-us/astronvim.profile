@@ -9,6 +9,10 @@ M.DEFAULTS = {
   label_colour = "Normal",
   -- the colour of the command
   command_colour = "Comment",
+  -- menus
+  menus = {},
+  -- whether to show the command in the menu
+  show_help = false,
 }
 
 M.MODES = { "i", "n" }

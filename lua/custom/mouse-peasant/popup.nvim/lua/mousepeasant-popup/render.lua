@@ -1,19 +1,27 @@
----@diagnostic disable-next-line: undefined-global
-local vim = vim
+-- Popup menu rendering logic
+--
+-- Neovim's menu system is a bit clunky, so we have to do some workarounds
+-- to get it to work properly.
+--
+-- The way it works is that you were expected to have a series of statically defined
+-- menus in your vimrc.
+-- Defined with a series of :menu commands.
+--
+-- eg:
+--  :amenu PopUp.File.New :echo "New File"<CR>
+--  :amenu PopUp.File.Open :echo "Open File"<CR>
+--  :amenu PopUp.Edit.Copy :echo "Copy"<CR>
+--  :amenu PopUp.Edit.Paste :echo "Paste"<CR>
+local astrocore = require "astrocore"
+
 local Constants = require "mousepeasant-popup.constants"
-
+local Predicates = require "mousepeasant-popup.predicate"
 local R = {}
-
---- Clear all entries from the given menu
----@param menu string
-R.clear_menu = function(menu)
-  pcall(function() vim.cmd("aunmenu " .. menu) end)
-end
 
 --- Formats the label of a menu entry to avoid errors
 ---@param label string
 ---@return string
-R.escape_label = function(label)
+local function escape_label(label)
   local res = string.gsub(label, " ", [[\ ]])
   res = string.gsub(res, "<", [[\<]])
   res = string.gsub(res, ">", [[\>]])
@@ -21,7 +29,11 @@ R.escape_label = function(label)
 end
 
 -- a function that removes all non alphanumeric characters from a string and replaces spaces with underscores
-R.slugify = function(label) return string.gsub(label, "[^%w%s]", ""):gsub("%s+", "_") end
+local function slugify(label) return string.gsub(label, "[^%w%s]", ""):gsub("%s+", "_") end
+
+--- Clear all entries from the given menu
+---@param menu string
+R.clear_menu = function(menu) return "aunmenu " .. menu end
 
 R.label = function(item)
   --merge with R.DEFAULTS if not nil
@@ -55,7 +67,7 @@ R.should_menu_item_display = function(menu)
   -- if menu has a condition and it's a function,
   -- bail out of rendering it anew,
   -- and just return the menu as is
-  if menu.condition ~= nil and type(menu.condition) == "function" then return menu.condition() end
+  if menu.condition ~= nil and type(menu.condition) == "function" then return menu.condition(Predicates) end
   return true
 end
 
@@ -75,27 +87,32 @@ end
 -- command that does something.
 
 R.menu_action = function(menu)
-  if not R.should_menu_item_display(menu) then return end
+  if not R.should_menu_item_display(menu) then return {} end
 
   -- skip if no command is defined
-  if not menu.command then return end
+  if not menu.command then return {} end
+  local entry = {}
 
   -- create the menu entry for each mode
   for _, mode in ipairs(menu.modes or Constants.MODES) do
-    local cmd = mode .. "menu " .. menu.groupid .. "." .. R.escape_label(R.label(menu)) .. " " .. menu.command
-    vim.cmd(cmd)
+    local cmd = mode .. "menu " .. menu.groupid .. "." .. escape_label(R.label(menu)) .. " " .. menu.command
+    entry[#entry + 1] = cmd
   end
+
+  return entry
 end
 
 R.menu_popup = function(menu)
-  if not R.should_menu_item_display(menu) then return end
+  if not R.should_menu_item_display(menu) then return {} end
+  local entry = {}
 
   -- generate a popup id
-  local popupId = R.slugify(menu.label)
+  local popupId = slugify(menu.label)
 
   -- allows the submenu to be opened with the mouse
   menu.command = "<cmd> popup " .. popupId .. "<cr>"
-  R.menu_action(menu)
+  local action_cmds = R.menu_action(menu)
+  if action_cmds then vim.list_extend(entry, action_cmds) end
 
   for _, item in ipairs(menu.items) do
     -- anchor all children to this popupid
@@ -103,25 +120,36 @@ R.menu_popup = function(menu)
     -- merge with parent options
     item.options = vim.tbl_extend("force", menu.options or {}, item.options or {})
     -- fork to decide if it's a submenu or a menu item
-    R.menu_item(item)
+    local item_cmds = R.menu_item(item)
+    if item_cmds then vim.list_extend(entry, item_cmds) end
   end
+
+  return entry
 end
 
 R.menu_separator = function(menu)
-  if not R.should_menu_item_display(menu) then return end
+  if not R.should_menu_item_display(menu) then return {} end
+
+  local entry = {}
 
   -- create the menu entry for each mode
   for _, mode in ipairs(menu.modes or Constants.MODES) do
     local cmd = mode .. "menu " .. menu.groupid .. ".-1- <Nop>"
-    vim.cmd(cmd)
+    entry[#entry + 1] = cmd
   end
+
+  return entry
 end
 
 R.menu_item = function(menu)
-  if menu.items ~= nil then
-    R.menu_popup(menu)
+  if menu.separator then
+    return R.menu_separator(menu)
+  elseif menu == nil then
+    return
+  elseif menu.items ~= nil then
+    return R.menu_popup(menu)
   else
-    R.menu_action(menu)
+    return R.menu_action(menu)
   end
 end
 
@@ -135,14 +163,54 @@ R.menu = function(options)
   local events = options.events or { "BufEnter" }
   local menus = options.menus or {}
 
+  -- Flatten menus if they're nested arrays
+  local flattened = {}
+  for i, menu in ipairs(menus) do
+    if type(menu) == "table" and menu[1] ~= nil and type(menu[1]) == "table" then
+      -- This is an array of menu items, wrap it as a submenu group
+      table.insert(flattened, {
+        label = menu.label or ("Menu " .. i),
+        items = menu,
+        options = menu.options,
+      })
+    else
+      -- This is a single menu, add it
+      table.insert(flattened, menu)
+    end
+  end
+
   vim.api.nvim_create_autocmd(events, {
     callback = function()
-      R.clear_menu "PopUp"
+      local entries = {}
 
-      for _, menu in ipairs(menus) do
+      table.insert(entries, R.clear_menu "PopUp")
+
+      for _, menu in ipairs(flattened) do
         menu.groupid = "PopUp"
-        R.menu_item(menu)
+        local menu_cmds = R.menu_item(menu)
+        if menu_cmds then vim.list_extend(entries, menu_cmds) end
       end
+
+      local pretty_entries = table.concat(entries, "\n  ")
+      astrocore.notify(
+        "Rendering popup menu with "
+          .. #entries
+          .. " entries."
+          .. "\n"
+          .. "DEFINITION:"
+          .. "\n"
+          .. vim.inspect(menus)
+          .. "\n"
+          .. "FLATTENED:"
+          .. vim.inspect(flattened)
+          .. "\n"
+          .. "ENTRIES:"
+          .. "\n"
+          .. pretty_entries,
+        vim.log.levels.DEBUG
+      )
+
+      vim.cmd(pretty_entries)
     end,
   })
 end
