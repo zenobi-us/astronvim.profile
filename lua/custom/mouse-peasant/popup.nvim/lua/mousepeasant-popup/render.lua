@@ -1,3 +1,5 @@
+---@diagnostic disable-next-line: undefined-global
+local vim = vim
 local Constants = require "mousepeasant-popup.constants"
 
 local R = {}
