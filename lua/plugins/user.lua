@@ -4,31 +4,31 @@ return {
   {
     "folke/which-key.nvim",
     opts = {
-       spec = {
-         { "<leader>f", group = "Find" },
-         { "<leader>ff", desc = "Find files" },
-         { "<leader>fg", desc = "Find in files" },
-         { "<leader>fb", desc = "Find buffers" },
-         { "<leader>fh", desc = "Find help tags" },
-         { "<leader>g", group = "Git" },
-         { "<leader>gw", group = "Worktree" },
-         { "<leader>gws", desc = "Switch worktree" },
-         { "<leader>gwn", desc = "New worktree" },
-         { "<leader>gwc", desc = "Create worktree from existing branch" },
-         { "<leader>gwr", desc = "Remove worktree" },
-         { "<leader>gy", desc = "Get GitHub URL" },
-         { "<leader>l", group = "LSP" },
-         { "<leader>la", desc = "Code action" },
-         { "<leader>lA", desc = "Source action" },
-         { "<leader>lf", desc = "Format buffer" },
-         { "<leader>lG", desc = "Search workspace symbols" },
-         { "<leader>lh", desc = "Signature help" },
-         { "<leader>li", desc = "Hover information" },
-         { "<leader>lL", desc = "Run code lens" },
-         { "<leader>ll", desc = "Refresh code lenses" },
-         { "<leader>lr", desc = "Rename symbol" },
-         { "<leader>lR", desc = "Find all references" },
-       },
+      spec = {
+        { "<leader>f", group = "Find" },
+        { "<leader>ff", desc = "Find files" },
+        { "<leader>fg", desc = "Find in files" },
+        { "<leader>fb", desc = "Find buffers" },
+        { "<leader>fh", desc = "Find help tags" },
+        { "<leader>g", group = "Git" },
+        { "<leader>gw", group = "Worktree" },
+        { "<leader>gws", desc = "Switch worktree" },
+        { "<leader>gwn", desc = "New worktree" },
+        { "<leader>gwc", desc = "Create worktree from existing branch" },
+        { "<leader>gwr", desc = "Remove worktree" },
+        { "<leader>gy", desc = "Get GitHub URL" },
+        { "<leader>l", group = "LSP" },
+        { "<leader>la", desc = "Code action" },
+        { "<leader>lA", desc = "Source action" },
+        { "<leader>lf", desc = "Format buffer" },
+        { "<leader>lG", desc = "Search workspace symbols" },
+        { "<leader>lh", desc = "Signature help" },
+        { "<leader>li", desc = "Hover information" },
+        { "<leader>lL", desc = "Run code lens" },
+        { "<leader>ll", desc = "Refresh code lenses" },
+        { "<leader>lr", desc = "Rename symbol" },
+        { "<leader>lR", desc = "Find all references" },
+      },
     },
   },
 
@@ -77,8 +77,10 @@ return {
     dir = vim.env.HOME .. "/.config/nvim/lua/custom/mouse-peasant/popup.nvim",
     opts = {
       menus = {
-        require("plugins.popups.neotree").menus,
-        -- require("plugins.popups.lsp").menus,
+        PopUp = {
+          unpack(require("plugins.popups.neotree").menus),
+          -- require("plugins.popups.lsp").menus,
+        },
       },
     },
   },
@@ -135,55 +137,24 @@ return {
   -- Disable built-in alpha dashboard
   { "goolord/alpha-nvim", enabled = false },
 
-   -- You can disable default plugins as follows:
-   { "max397574/better-escape.nvim", enabled = false },
+  -- You can disable default plugins as follows:
+  { "max397574/better-escape.nvim", enabled = false },
 
-    -- Fuzzy finder
-     {
-       "nvim-telescope/telescope.nvim",
-       branch = "0.1.x",
-       dependencies = {
-         "nvim-lua/plenary.nvim",
-         { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-       },
-       config = function()
-         require("telescope").setup({
-           defaults = {
-             file_ignore_patterns = { "node_modules", ".git" },
-           },
-           extensions = {
-             fzf = {
-               fuzzy = true,
-               override_generic_sorter = true,
-               override_file_sorter = true,
-               case_mode = "smart_case",
-             },
-           },
-         })
-         require("telescope").load_extension("fzf")
-       end,
-     },
+  -- Generate GitHub permalinks for code selections
+  {
+    "ruifm/gitlinker.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require("gitlinker").setup()
+      vim.keymap.set(
+        { "n", "v" },
+        "<leader>gy",
+        function() require("gitlinker").get_buf_range_url() end,
+        { silent = true, desc = "Get GitHub URL for selection" }
+      )
+    end,
+  },
 
-   -- Generate GitHub permalinks for code selections
-    {
-      "ruifm/gitlinker.nvim",
-      dependencies = { "nvim-lua/plenary.nvim" },
-      config = function()
-        require("gitlinker").setup()
-        vim.keymap.set({ "n", "v" }, "<leader>gy", function() require("gitlinker").get_buf_range_url() end, { silent = true, desc = "Get GitHub URL for selection" })
-      end,
-    },
-
-   -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
-    {
-      "L3MON4D3/LuaSnip",
-      config = function(plugin, opts)
-        require "astronvim.plugins.configs.luasnip"(plugin, opts) -- include the default astronvim config that calls the setup call
-        -- add more custom luasnip configuration such as filetype extend or custom snippets
-        local luasnip = require "luasnip"
-        luasnip.filetype_extend("javascript", { "javascriptreact" })
-      end,
-    },
   -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
   {
     "L3MON4D3/LuaSnip",

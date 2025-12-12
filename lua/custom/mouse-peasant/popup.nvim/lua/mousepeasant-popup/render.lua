@@ -16,6 +16,7 @@ local astrocore = require "astrocore"
 
 local Constants = require "mousepeasant-popup.constants"
 local Predicates = require "mousepeasant-popup.predicate"
+local Types = require "mousepeasant-popup.types"
 local R = {}
 
 --- Formats the label of a menu entry to avoid errors
@@ -87,10 +88,11 @@ end
 -- command that does something.
 
 R.menu_action = function(menu)
-  if not R.should_menu_item_display(menu) then return {} end
+  -- if not R.should_menu_item_display(menu) then return {} end
 
   -- skip if no command is defined
-  if not menu.command then return {} end
+  if not Types.isMenuItemWithCommand(menu) then return {} end
+
   local entry = {}
 
   -- create the menu entry for each mode
@@ -99,11 +101,13 @@ R.menu_action = function(menu)
     entry[#entry + 1] = cmd
   end
 
+  print("Created menu action for: " .. menu.label .. " with command: " .. menu.command .. " \n" .. vim.inspect(entry))
+
   return entry
 end
 
 R.menu_popup = function(menu)
-  if not R.should_menu_item_display(menu) then return {} end
+  -- if not R.should_menu_item_display(menu) then return {} end
   local entry = {}
 
   -- generate a popup id
@@ -142,15 +146,16 @@ R.menu_separator = function(menu)
 end
 
 R.menu_item = function(menu)
-  if menu.separator then
-    return R.menu_separator(menu)
-  elseif menu == nil then
-    return
-  elseif menu.items ~= nil then
-    return R.menu_popup(menu)
-  else
-    return R.menu_action(menu)
-  end
+  if not Types.isMenuItem(menu) then return end
+
+  if Types.isMenuItemWithSubmenu(menu) then return R.menu_popup(menu) end
+
+  if Types.isMenuItemWithCommand(menu) then return R.menu_action(menu) end
+
+  if Types.isMenuItemSeparator(menu) then return R.menu_separator(menu) end
+
+  print("Invalid menu item: " .. vim.inspect(menu))
+  return nil
 end
 
 -- Main entry point
@@ -158,61 +163,43 @@ end
 -- @param options table
 -- @param options.events table
 -- @param options.menus table
-R.menu = function(options)
-  options = options or {}
-  local events = options.events or { "BufEnter" }
-  local menus = options.menus or {}
+R.menu = function(groupId, items)
+  print(groupId, vim.inspect(items))
 
-  -- Flatten menus if they're nested arrays
-  local flattened = {}
-  for i, menu in ipairs(menus) do
-    if type(menu) == "table" and menu[1] ~= nil and type(menu[1]) == "table" then
-      -- This is an array of menu items, wrap it as a submenu group
-      table.insert(flattened, {
-        label = menu.label or ("Menu " .. i),
-        items = menu,
-        options = menu.options,
-      })
-    else
-      -- This is a single menu, add it
-      table.insert(flattened, menu)
+  print("Registering menu group: " .. groupId)
+
+  R.clear_menu(groupId)
+
+  for _, menu in ipairs(items) do
+    if Types.isMenuItem(menu) == false then
+      astrocore.notify("Invalid menu item in GroupId: " .. groupId .. "\n" .. vim.inspect(menu), vim.log.levels.ERROR)
+      return
+    end
+
+    -- anchor all children to this GroupId
+    menu.groupid = groupId
+
+    print("Registering menu item: " .. menu.label .. " in group: " .. groupId)
+    local cmds = R.menu_item(menu)
+
+    if cmds then
+      for _, cmd in ipairs(cmds) do
+        vim.cmd(cmd)
+      end
+
+      print(vim.inspect(cmds))
+      print "----\n"
     end
   end
 
-  vim.api.nvim_create_autocmd(events, {
-    callback = function()
-      local entries = {}
-
-      table.insert(entries, R.clear_menu "PopUp")
-
-      for _, menu in ipairs(flattened) do
-        menu.groupid = "PopUp"
-        local menu_cmds = R.menu_item(menu)
-        if menu_cmds then vim.list_extend(entries, menu_cmds) end
-      end
-
-      local pretty_entries = table.concat(entries, "\n  ")
-      astrocore.notify(
-        "Rendering popup menu with "
-          .. #entries
-          .. " entries."
-          .. "\n"
-          .. "DEFINITION:"
-          .. "\n"
-          .. vim.inspect(menus)
-          .. "\n"
-          .. "FLATTENED:"
-          .. vim.inspect(flattened)
-          .. "\n"
-          .. "ENTRIES:"
-          .. "\n"
-          .. pretty_entries,
-        vim.log.levels.DEBUG
-      )
-
-      vim.cmd(pretty_entries)
-    end,
-  })
+  -- create autocmd to manage which items are enabled/disabled
+  -- vim.api.nvim_create_augroup("MenuPopup", {
+  --   callback = function()
+  --     -- clear existing menu items
+  --     -- vim.cmd(R.clear_menu "PopUp")
+  --     -- for each key,value pair in menus
+  --   end,
+  -- })
 end
 
 return R
