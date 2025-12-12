@@ -12,6 +12,7 @@ M.render.clear_menu "PopUp"
 M.opts = {
   events = { "BufEnter" },
   menus = {},
+  debug = false,
 }
 
 --- @param opts PopupOptions

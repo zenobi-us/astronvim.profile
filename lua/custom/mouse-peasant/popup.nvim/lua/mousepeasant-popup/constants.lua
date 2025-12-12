@@ -13,6 +13,8 @@ M.DEFAULTS = {
   menus = {},
   -- whether to show the command in the menu
   show_help = false,
+  -- enable debug logging
+  debug = false,
 }
 
 M.MODES = { "i", "n" }
