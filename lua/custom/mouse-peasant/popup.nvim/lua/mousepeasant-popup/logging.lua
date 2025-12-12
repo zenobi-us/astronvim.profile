@@ -1,11 +1,15 @@
 local M = {}
 
-local init = require "mousepeasant-popup.init"
+--- Get the init module (lazy-loaded to avoid circular dependencies)
+local function get_init()
+  return require "mousepeasant-popup.init"
+end
 
 --- Log a message if debug mode is enabled
 --- @param message string The message to log
 --- @param level? integer The log level (default: vim.log.levels.INFO)
 M.log = function(message, level)
+  local init = get_init()
   if not init.opts.debug then
     return
   end
