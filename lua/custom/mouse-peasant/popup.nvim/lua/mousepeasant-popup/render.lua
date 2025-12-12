@@ -17,6 +17,7 @@ local astrocore = require "astrocore"
 local Constants = require "mousepeasant-popup.constants"
 local Predicates = require "mousepeasant-popup.predicate"
 local Types = require "mousepeasant-popup.types"
+local Log = require "mousepeasant-popup.logging"
 local R = {}
 
 --- Formats the label of a menu entry to avoid errors
@@ -101,7 +102,7 @@ R.menu_action = function(menu)
     entry[#entry + 1] = cmd
   end
 
-  print("Created menu action for: " .. menu.label .. " with command: " .. menu.command .. " \n" .. vim.inspect(entry))
+   Log.debug("Created menu action for: " .. menu.label .. " with command: " .. menu.command .. " \n" .. vim.inspect(entry))
 
   return entry
 end
@@ -154,7 +155,7 @@ R.menu_item = function(menu)
 
   if Types.isMenuItemSeparator(menu) then return R.menu_separator(menu) end
 
-  print("Invalid menu item: " .. vim.inspect(menu))
+   Log.error("Invalid menu item: " .. vim.inspect(menu))
   return nil
 end
 
@@ -164,9 +165,9 @@ end
 -- @param options.events table
 -- @param options.menus table
 R.menu = function(groupId, items)
-  print(groupId, vim.inspect(items))
+   Log.debug("Group: " .. groupId .. ", Items: " .. vim.inspect(items))
 
-  print("Registering menu group: " .. groupId)
+   Log.info("Registering menu group: " .. groupId)
 
   R.clear_menu(groupId)
 
@@ -179,7 +180,7 @@ R.menu = function(groupId, items)
     -- anchor all children to this GroupId
     menu.groupid = groupId
 
-    print("Registering menu item: " .. menu.label .. " in group: " .. groupId)
+     Log.debug("Registering menu item: " .. menu.label .. " in group: " .. groupId)
     local cmds = R.menu_item(menu)
 
     if cmds then
@@ -187,8 +188,8 @@ R.menu = function(groupId, items)
         vim.cmd(cmd)
       end
 
-      print(vim.inspect(cmds))
-      print "----\n"
+       Log.trace(vim.inspect(cmds))
+       Log.trace("----")
     end
   end
 
