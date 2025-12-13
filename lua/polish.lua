@@ -5,14 +5,14 @@
 -- Configure clipboard for WSL with win32yank
 if vim.env.WSL_DISTRO_NAME then
   vim.g.clipboard = {
-    name = 'win32yank',
+    name = "win32yank",
     copy = {
-      ['+'] = 'win32yank.exe -i --crlf',
-      ['*'] = 'win32yank.exe -i --crlf',
+      ["+"] = "win32yank.exe -i --crlf",
+      ["*"] = "win32yank.exe -i --crlf",
     },
     paste = {
-      ['+'] = 'win32yank.exe -o --lf',
-      ['*'] = 'win32yank.exe -o --lf',
+      ["+"] = "win32yank.exe -o --lf",
+      ["*"] = "win32yank.exe -o --lf",
     },
     cache_enabled = 0,
   }
@@ -285,6 +285,23 @@ vim.api.nvim_create_autocmd("BufEnter", {
   callback = function() vim.cmd "startinsert" end,
 })
 vim.opt.mouse = "a"
+
+-- Shift+Arrow keys for text selection in normal and insert modes
+-- Shift+Left: select to the left
+vim.keymap.set("n", "<S-Left>", "v<Left>", { noremap = true, silent = true, desc = "Select to the left" })
+vim.keymap.set("i", "<S-Left>", "<C-o>v<Left>", { noremap = true, silent = true, desc = "Select to the left" })
+
+-- Shift+Right: select to the right
+vim.keymap.set("n", "<S-Right>", "v<Right>", { noremap = true, silent = true, desc = "Select to the right" })
+vim.keymap.set("i", "<S-Right>", "<C-o>v<Right>", { noremap = true, silent = true, desc = "Select to the right" })
+
+-- Shift+Up: select up
+vim.keymap.set("n", "<S-Up>", "v<Up>", { noremap = true, silent = true, desc = "Select up" })
+vim.keymap.set("i", "<S-Up>", "<C-o>v<Up>", { noremap = true, silent = true, desc = "Select up" })
+
+-- Shift+Down: select down
+vim.keymap.set("n", "<S-Down>", "v<Down>", { noremap = true, silent = true, desc = "Select down" })
+vim.keymap.set("i", "<S-Down>", "<C-o>v<Down>", { noremap = true, silent = true, desc = "Select down" })
 
 -- Config reload command
 vim.api.nvim_create_user_command("ReloadConfig", function()

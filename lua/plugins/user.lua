@@ -71,19 +71,19 @@ return {
       },
     },
   },
-  {
-    "mouse-peasant/popup.nvim",
-    event = "VeryLazy",
-    dir = vim.env.HOME .. "/.config/nvim/lua/custom/mouse-peasant/popup.nvim",
-    opts = {
-      menus = {
-        PopUp = {
-          unpack(require("plugins.popups.neotree").menus),
-          -- require("plugins.popups.lsp").menus,
-        },
-      },
-    },
-  },
+  -- {
+  --   "mouse-peasant/popup.nvim",
+  --   event = "VeryLazy",
+  --   dir = vim.env.HOME .. "/.config/nvim/lua/custom/mouse-peasant/popup.nvim",
+  --   opts = {
+  --     menus = {
+  --       PopUp = {
+  --         unpack(require("plugins.popups.neotree").menus),
+  --         -- require("plugins.popups.lsp").menus,
+  --       },
+  --     },
+  --   },
+  -- },
 
   --
   {

@@ -102,7 +102,9 @@ R.menu_action = function(menu)
     entry[#entry + 1] = cmd
   end
 
-   Log.debug("Created menu action for: " .. menu.label .. " with command: " .. menu.command .. " \n" .. vim.inspect(entry))
+  Log.debug(
+    "Created menu action for: " .. menu.label .. " with command: " .. menu.command .. " \n" .. vim.inspect(entry)
+  )
 
   return entry
 end
@@ -155,7 +157,7 @@ R.menu_item = function(menu)
 
   if Types.isMenuItemSeparator(menu) then return R.menu_separator(menu) end
 
-   Log.error("Invalid menu item: " .. vim.inspect(menu))
+  Log.error("Invalid menu item: " .. vim.inspect(menu))
   return nil
 end
 
@@ -165,9 +167,9 @@ end
 -- @param options.events table
 -- @param options.menus table
 R.menu = function(groupId, items)
-   Log.debug("Group: " .. groupId .. ", Items: " .. vim.inspect(items))
+  Log.debug("Group: " .. groupId .. ", Items: " .. vim.inspect(items))
 
-   Log.info("Registering menu group: " .. groupId)
+  Log.info("Registering menu group: " .. groupId)
 
   R.clear_menu(groupId)
 
@@ -180,7 +182,7 @@ R.menu = function(groupId, items)
     -- anchor all children to this GroupId
     menu.groupid = groupId
 
-     Log.debug("Registering menu item: " .. menu.label .. " in group: " .. groupId)
+    Log.debug("Registering menu item: " .. menu.label .. " in group: " .. groupId)
     local cmds = R.menu_item(menu)
 
     if cmds then
@@ -188,19 +190,23 @@ R.menu = function(groupId, items)
         vim.cmd(cmd)
       end
 
-       Log.trace(vim.inspect(cmds))
-       Log.trace("----")
+      Log.trace(vim.inspect(cmds))
+      Log.trace "----"
     end
   end
 
   -- create autocmd to manage which items are enabled/disabled
-  -- vim.api.nvim_create_augroup("MenuPopup", {
-  --   callback = function()
-  --     -- clear existing menu items
-  --     -- vim.cmd(R.clear_menu "PopUp")
-  --     -- for each key,value pair in menus
-  --   end,
-  -- })
+  vim.api.nvim_create_augroup("MenuPopup", { clear = true })
+  vim.api.nvim_create_autocmd("MenuPopup", {
+    group = "MenuPopup",
+    pattern = "*",
+    callback = function()
+      astrocore.notify("MenuPopup autocmd triggered", vim.log.levels.DEBUG)
+      -- clear existing menu items
+      -- vim.cmd(R.clear_menu "PopUp")
+      -- for each key,value pair in menus
+    end,
+  })
 end
 
 return R
