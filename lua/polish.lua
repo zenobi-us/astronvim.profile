@@ -30,3 +30,22 @@ else
     cache_enabled = 0,
   }
 end
+
+-- Shift+Arrow keys for selections in normal and insert mode
+-- Normal mode: Shift+Arrow selects text
+vim.keymap.set("n", "<S-Left>", "vh", { noremap = true, silent = true })
+vim.keymap.set("n", "<S-Right>", "vl", { noremap = true, silent = true })
+vim.keymap.set("n", "<S-Up>", "vk", { noremap = true, silent = true })
+vim.keymap.set("n", "<S-Down>", "vj", { noremap = true, silent = true })
+
+-- Visual mode: Shift+Arrow continues selection
+vim.keymap.set("v", "<S-Left>", "h", { noremap = true, silent = true })
+vim.keymap.set("v", "<S-Right>", "l", { noremap = true, silent = true })
+vim.keymap.set("v", "<S-Up>", "k", { noremap = true, silent = true })
+vim.keymap.set("v", "<S-Down>", "j", { noremap = true, silent = true })
+
+-- Insert mode: Shift+Arrow selects text and exits insert mode
+vim.keymap.set("i", "<S-Left>", "<Esc>vh", { noremap = true, silent = true })
+vim.keymap.set("i", "<S-Right>", "<Esc>vl", { noremap = true, silent = true })
+vim.keymap.set("i", "<S-Up>", "<Esc>vk", { noremap = true, silent = true })
+vim.keymap.set("i", "<S-Down>", "<Esc>vj", { noremap = true, silent = true })
