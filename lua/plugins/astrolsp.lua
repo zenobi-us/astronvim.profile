@@ -69,7 +69,18 @@ return {
             validate = { enable = true }
           }
         }
-      }
+      },
+      tailwindcss = {
+        settings = {
+          tailwindCSS = {
+            experimental = {
+              classRegex = {
+                { "cva\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)" },
+              },
+            },
+          },
+        },
+      },
     },
     -- customize how language servers are attached
     handlers = {

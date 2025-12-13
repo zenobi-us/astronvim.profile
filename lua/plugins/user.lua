@@ -71,23 +71,28 @@ return {
       },
     },
   },
-  {
-    "mouse-peasant/popup.nvim",
-    event = "VeryLazy",
-    dir = vim.env.HOME .. "/.config/nvim/lua/custom/mouse-peasant/popup.nvim",
-    opts = {
-      menus = {
-        PopUp = {
-          unpack(require("plugins.popups.neotree").menus),
-          -- require("plugins.popups.lsp").menus,
-        },
-      },
-    },
-  },
-
+  -- {
+  --   "mouse-peasant/popup.nvim",
+  --   dependencies = {
+  --     "nvim-neo-tree/neo-tree.nvim",
+  --   },
+  --   dir = vim.env.HOME .. "/.config/nvim/lua/custom/mouse-peasant/popup.nvim",
+  --   config = function(opts)
+  --     require("mousepeasant-popup").setup {
+  --       menus = {
+  --         PopUp = {
+  --           unpack(require("plugins.popups.neotree").get_menus()),
+  --         },
+  --       },
+  --     }
+  --     -- setup node tracking for neotree
+  --   end,
+  -- },
+  --
   --
   {
     "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
     opts = {
       source_selector = {
         winbar = false,

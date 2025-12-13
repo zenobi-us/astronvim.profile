@@ -14,6 +14,7 @@ return {
         "typescript-language-server",
         "eslint-lsp",
         "json-lsp",
+        "tailwindcss-language-server",
 
         -- install debuggers
         "debugpy",
