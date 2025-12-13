@@ -82,25 +82,20 @@ return {
         ["<C-W>"] = {
           function()
             local buf = vim.api.nvim_get_current_buf()
-            
+
             -- Get list of normal buffers (not special/hidden ones)
-            local normal_bufs = vim.tbl_filter(function(b)
-              return vim.bo[b].buflisted and vim.bo[b].buftype == ""
-            end, vim.api.nvim_list_bufs())
+            local normal_bufs = vim.tbl_filter(
+              function(b) return vim.bo[b].buflisted and vim.bo[b].buftype == "" end,
+              vim.api.nvim_list_bufs()
+            )
             local is_last_buffer = #normal_bufs <= 1
-            
+
             local function close_buffer(save)
-              if save then
-                vim.cmd.write()
-              end
-              require("snacks").bufdelete({ buf = buf, force = true })
-              if is_last_buffer then
-                vim.defer_fn(function()
-                  require("snacks").dashboard.open()
-                end, 10)
-              end
+              if save then vim.cmd.write() end
+              require("snacks").bufdelete { buf = buf, force = true }
+              if is_last_buffer then vim.defer_fn(function() require("snacks").dashboard.open() end, 10) end
             end
-            
+
             -- If buffer is modified, show modal confirmation via vim.ui.select
             if vim.bo[buf].modified then
               local filename = vim.fn.fnamemodify(vim.fn.bufname(buf), ":t")
@@ -120,7 +115,7 @@ return {
               close_buffer(false)
             end
           end,
-          desc = "Close buffer"
+          desc = "Close buffer",
         },
 
         -- Word jump with Ctrl+Arrow
@@ -131,63 +126,331 @@ return {
         ["<C-Up>"] = false,
         ["<C-Down>"] = false,
 
-         -- Home/End keys (Alacritty sends <Find>/<Select> for these)
-         ["<Home>"] = { "^", desc = "Move to first non-blank" },
-         ["<End>"] = { "$", desc = "Move to end of line" },
-         ["<Find>"] = { "^", desc = "Home key (Alacritty)" },
-         ["<Select>"] = { "$", desc = "End key (Alacritty)" },
+        -- Home/End keys (Alacritty sends <Find>/<Select> for these)
+        ["<Home>"] = { "^", desc = "Move to first non-blank" },
+        ["<End>"] = { "$", desc = "Move to end of line" },
+        ["<Find>"] = { "^", desc = "Home key (Alacritty)" },
+        ["<Select>"] = { "$", desc = "End key (Alacritty)" },
 
-         -- Delete whole word with Ctrl+Backspace in normal mode
-          ["<C-BS>"] = { "db", desc = "Delete word backward" },
-          ["\x1b[127;5u"] = { "db", desc = "Delete word backward (Alacritty)" },
+        -- Delete whole word with Ctrl+Backspace in normal mode
+        ["<C-BS>"] = { "db", desc = "Delete word backward" },
+        ["\x1b[127;5u"] = { "db", desc = "Delete word backward (Alacritty)" },
 
-          -- Ctrl+Click to goto definition
-          ["<C-LeftMouse>"] = { function() vim.lsp.buf.definition() end, desc = "Goto definition" },
+        -- Ctrl+Click to goto definition
+        ["<C-LeftMouse>"] = { function() vim.lsp.buf.definition() end, desc = "Goto definition" },
 
-          -- tables with just a `desc` key will be registered with which-key if it's installed
-          -- this is useful for naming menus
-          -- ["<Leader>b"] = { desc = "Buffers" },
-
-          -- setting a mapping to false will disable it
-          -- ["<C-S>"] = false,
+        -- Grug search on Ctrl+F
+        ["<C-f>"] = {
+          function()
+            local search_term = vim.fn.expand "<cword>"
+            require("grug-far").toggle_instance {
+              instanceName = "main",
+              prefills = { search = search_term },
+            }
+          end,
+          desc = "Toggle grug search",
         },
-       i = {
-         -- save file in insert mode without leaving insert mode
-         ["<C-S>"] = { function() vim.api.nvim_command("write") end, desc = "Save file" },
 
-         -- Word jump with Ctrl+Arrow in insert mode
-         ["<C-Left>"] = { "<C-o>b", desc = "Jump to previous word start" },
-         ["<C-Right>"] = { "<C-o>w", desc = "Jump to next word start" },
+        -- Grug search and replace on Ctrl+Shift+F
+        ["<C-S-f>"] = {
+          function()
+            local search_term = vim.fn.expand "<cword>"
+            require("grug-far").toggle_instance {
+              instanceName = "main",
+              prefills = { search = search_term },
+            }
+          end,
+          desc = "Toggle grug search and replace",
+        },
 
-         -- Delete whole word with Ctrl+Backspace (uses Vim's built-in CTRL-W)
-         -- Note: Requires Alacritty to send the escape sequence (see alacritty.toml)
-         ["<C-BS>"] = { "<C-w>", desc = "Delete word backward" },
-         -- Map the escape sequence that Alacritty sends for Ctrl+Backspace
-         ["\x1b[127;5u"] = { "<C-w>", desc = "Delete word backward (Alacritty)" },
+        -- Clone current line (Ctrl+Shift+D)
+        ["<C-S-d>"] = {
+          function() vim.cmd "copy ." end,
+          desc = "Clone current line",
+        },
 
-         -- Home/End keys (Alacritty sends <Find>/<Select> for these)
-         ["<Home>"] = { "<C-o>^", desc = "Move to first non-blank" },
-         ["<End>"] = { "<C-o>$", desc = "Move to end of line" },
-         ["<Find>"] = { "<C-o>^", desc = "Home key (Alacritty)" },
-         ["<Select>"] = { "<C-o>$", desc = "End key (Alacritty)" },
+        -- Delete current line (Ctrl+Shift+K)
+        ["<C-S-k>"] = {
+          function() vim.cmd "delete" end,
+          desc = "Delete current line",
+        },
 
-         -- Text selection with Shift+Arrow keys (character/line at a time)
-         ["<S-Left>"] = { "<C-o>v<C-o>h", desc = "Select character left" },
-         ["<S-Right>"] = { "<C-o>v<C-o>l", desc = "Select character right" },
-         ["<S-Up>"] = { "<C-o>v<C-o>k", desc = "Select line up" },
-         ["<S-Down>"] = { "<C-o>v<C-o>j", desc = "Select line down" },
+        -- Copy to clipboard (Ctrl+C)
+        ["<C-c>"] = {
+          function() vim.cmd 'normal! "+yy' end,
+          desc = "Copy current line",
+        },
 
-         -- Text selection with Ctrl+Shift+Arrow keys (word/line at a time)
-         ["<C-S-Left>"] = { "<C-o>v<C-o>b", desc = "Select word left" },
-         ["<C-S-Right>"] = { "<C-o>v<C-o>w", desc = "Select word right" },
-         ["<C-S-Up>"] = { "<C-o>v<C-o>k", desc = "Select line up" },
-         ["<C-S-Down>"] = { "<C-o>v<C-o>j", desc = "Select line down" },
-       },
+        -- Cut to clipboard (Ctrl+X)
+        ["<C-x>"] = {
+          function() vim.cmd 'normal! "+dd' end,
+          desc = "Cut current line",
+        },
+
+        -- Paste from clipboard (Ctrl+V)
+        ["<C-v>"] = {
+          function() vim.cmd 'normal! "+p' end,
+          desc = "Paste after cursor",
+        },
+
+        -- Navigation with Alt arrow keys for back/forward
+        ["<A-Left>"] = { "<C-o>", desc = "Go back in navigation history" },
+        ["<A-Right>"] = { "<C-i>", desc = "Go forward in navigation history" },
+
+        -- Shift+Arrow keys for text selection
+        ["<S-Left>"] = { "v<Left>", desc = "Select to the left" },
+        ["<S-Right>"] = { "v<Right>", desc = "Select to the right" },
+        ["<S-Up>"] = { "v<Up>", desc = "Select up" },
+        ["<S-Down>"] = { "v<Down>", desc = "Select down" },
+
+        -- tables with just a `desc` key will be registered with which-key if it's installed
+        -- this is useful for naming menus
+        -- ["<Leader>b"] = { desc = "Buffers" },
+
+        -- setting a mapping to false will disable it
+        -- ["<C-S>"] = false,
+      },
+      i = {
+        -- save file in insert mode without leaving insert mode
+        ["<C-S>"] = { function() vim.api.nvim_command "write" end, desc = "Save file" },
+
+        -- Word jump with Ctrl+Arrow in insert mode
+        ["<C-Left>"] = { "<C-o>b", desc = "Jump to previous word start" },
+        ["<C-Right>"] = { "<C-o>w", desc = "Jump to next word start" },
+
+        -- Delete whole word with Ctrl+Backspace (uses Vim's built-in CTRL-W)
+        -- Note: Requires Alacritty to send the escape sequence (see alacritty.toml)
+        ["<C-BS>"] = { "<C-w>", desc = "Delete word backward" },
+        -- Map the escape sequence that Alacritty sends for Ctrl+Backspace
+        ["\x1b[127;5u"] = { "<C-w>", desc = "Delete word backward (Alacritty)" },
+
+        -- Home/End keys (Alacritty sends <Find>/<Select> for these)
+        ["<Home>"] = { "<C-o>^", desc = "Move to first non-blank" },
+        ["<End>"] = { "<C-o>$", desc = "Move to end of line" },
+        ["<Find>"] = { "<C-o>^", desc = "Home key (Alacritty)" },
+        ["<Select>"] = { "<C-o>$", desc = "End key (Alacritty)" },
+
+        -- Text selection with Shift+Arrow keys (character/line at a time)
+        ["<S-Left>"] = { "<C-o>v<C-o>h", desc = "Select character left" },
+        ["<S-Right>"] = { "<C-o>v<C-o>l", desc = "Select character right" },
+        ["<S-Up>"] = { "<C-o>v<C-o>k", desc = "Select line up" },
+        ["<S-Down>"] = { "<C-o>v<C-o>j", desc = "Select line down" },
+
+        -- Text selection with Ctrl+Shift+Arrow keys (word/line at a time)
+        ["<C-S-Left>"] = { "<C-o>v<C-o>b", desc = "Select word left" },
+        ["<C-S-Right>"] = { "<C-o>v<C-o>w", desc = "Select word right" },
+        ["<C-S-Up>"] = { "<C-o>v<C-o>k", desc = "Select line up" },
+        ["<C-S-Down>"] = { "<C-o>v<C-o>j", desc = "Select line down" },
+
+        -- Copilot keymaps
+        ["<Tab>"] = {
+          function()
+            if require("copilot.suggestion").is_visible() then
+              require("copilot.suggestion").accept()
+            else
+              vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n")
+            end
+          end,
+          desc = "Accept Copilot suggestion or tab",
+        },
+
+        ["<M-]>"] = {
+          function() require("copilot.suggestion").next() end,
+          desc = "Next Copilot suggestion",
+        },
+
+        ["<M-[>"] = {
+          function() require("copilot.suggestion").prev() end,
+          desc = "Previous Copilot suggestion",
+        },
+
+        ["<C-]>"] = {
+          function() require("copilot.suggestion").dismiss() end,
+          desc = "Dismiss Copilot suggestion",
+        },
+
+        -- Paste from clipboard (Ctrl+V)
+        ["<C-v>"] = { "<C-r>+", desc = "Paste from clipboard" },
+
+        -- Copy to clipboard (Ctrl+C)
+        ["<C-c>"] = {
+          function() vim.cmd 'normal! "+y' end,
+          desc = "Copy selection",
+        },
+
+        -- Cut to clipboard (Ctrl+X)
+        ["<C-x>"] = {
+          function() vim.cmd 'normal! "+d' end,
+          desc = "Cut selection",
+        },
+
+        -- Clone selected lines (Ctrl+Shift+D)
+        ["<C-S-d>"] = {
+          function() vim.cmd "'<,'>copy '>'" end,
+          desc = "Clone selected lines",
+        },
+
+        -- Delete selected lines (Ctrl+Shift+K)
+        ["<C-S-k>"] = {
+          function() vim.cmd "'<,'>delete" end,
+          desc = "Delete selected lines",
+        },
+      },
+      v = {
+        -- Grug search in visual mode
+        ["<C-f>"] = {
+          function()
+            vim.cmd 'noau normal! "zy'
+            local search_term = vim.fn.getreg "z"
+            require("grug-far").toggle_instance {
+              instanceName = "main",
+              prefills = { search = search_term },
+            }
+          end,
+          desc = "Toggle grug search with selection",
+        },
+
+        -- Grug search and replace in visual mode
+        ["<C-S-f>"] = {
+          function()
+            vim.cmd 'noau normal! "zy'
+            local search_term = vim.fn.getreg "z"
+            require("grug-far").open { prefills = { search = search_term } }
+          end,
+          desc = "Open grug search and replace with selection",
+        },
+
+        -- Clone selected lines (Ctrl+Shift+D)
+        ["<C-S-d>"] = {
+          function() vim.cmd "'<,'>copy '>'" end,
+          desc = "Clone selected lines",
+        },
+
+        -- Delete selected lines (Ctrl+Shift+K)
+        ["<C-S-k>"] = {
+          function() vim.cmd "'<,'>delete" end,
+          desc = "Delete selected lines",
+        },
+
+        -- Copy to clipboard (Ctrl+C)
+        ["<C-c>"] = {
+          function() vim.cmd 'normal! "+y' end,
+          desc = "Copy selection",
+        },
+
+        -- Cut to clipboard (Ctrl+X)
+        ["<C-x>"] = {
+          function() vim.cmd 'normal! "+d' end,
+          desc = "Cut selection",
+        },
+
+        -- Paste over selection (Ctrl+V)
+        ["<C-v>"] = {
+          function() vim.cmd 'normal! "+p' end,
+          desc = "Paste over selection",
+        },
+      },
       c = {
         -- Delete whole word with Ctrl+Backspace in command mode
         ["<C-BS>"] = { "<C-w>", desc = "Delete word backward" },
         ["\x1b[127;5u"] = { "<C-w>", desc = "Delete word backward (Alacritty)" },
       },
+      t = {
+        -- Toggle last used toggleterm layout (Ctrl+~)
+        ["<C-~>"] = {
+          function() require("toggleterm").toggle() end,
+          desc = "Toggle last used toggleterm",
+        },
+      },
     },
+    -- Additional setup for complex keybinds and autocommands
+    init = function()
+      -- Toggle last used toggleterm layout (Ctrl+~) - normal mode
+      vim.keymap.set(
+        { "n", "i", "t" },
+        "<C-~>",
+        function() require("toggleterm").toggle() end,
+        { noremap = true, silent = true, desc = "Toggle last used toggleterm" }
+      )
+
+      -- Auto-enter insert mode in sidekick_terminal buffers
+      vim.api.nvim_create_autocmd("BufEnter", {
+        pattern = "sidekick_terminal",
+        callback = function() vim.cmd "startinsert" end,
+      })
+
+      -- Create custom quit command with confirmation
+      local function show_quit_confirm()
+        local width = 40
+        local height = 7
+        local lines = {
+          "┌" .. string.rep("─", width - 2) .. "┐",
+          "│" .. string.rep(" ", width - 2) .. "│",
+          "│" .. string.format("%-" .. (width - 2) .. "s", "  Are you sure?") .. "│",
+          "│" .. string.rep(" ", width - 2) .. "│",
+          "│" .. string.format("%-" .. (width - 2) .. "s", "  [Y]es    [N]o") .. "│",
+          "│" .. string.rep(" ", width - 2) .. "│",
+          "└" .. string.rep("─", width - 2) .. "┘",
+        }
+
+        -- Calculate centered position
+        local ui = vim.api.nvim_list_uis()[1]
+        local win_width = ui.width
+        local win_height = ui.height
+        local col = math.floor((win_width - width) / 2)
+        local row = math.floor((win_height - height) / 2)
+
+        -- Create floating window
+        local buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+        local win_opts = {
+          relative = "editor",
+          width = width,
+          height = height,
+          col = col,
+          row = row,
+          style = "minimal",
+          border = "none",
+        }
+
+        local win = vim.api.nvim_open_win(buf, true, win_opts)
+
+        -- Key mappings for the confirmation
+        local function handle_response(response)
+          vim.api.nvim_win_close(win, true)
+          if response == "yes" then vim.cmd "quit" end
+        end
+
+        vim.keymap.set("n", "y", function() handle_response "yes" end, { noremap = true, silent = true, buffer = buf })
+        vim.keymap.set("n", "n", function() handle_response "no" end, { noremap = true, silent = true, buffer = buf })
+        vim.keymap.set(
+          "n",
+          "<CR>",
+          function() handle_response "yes" end,
+          { noremap = true, silent = true, buffer = buf }
+        )
+        vim.keymap.set(
+          "n",
+          "<Esc>",
+          function() handle_response "no" end,
+          { noremap = true, silent = true, buffer = buf }
+        )
+      end
+
+      vim.api.nvim_create_user_command("Q", function() show_quit_confirm() end, {})
+      vim.cmd "cnoreabbrev q Q"
+
+      -- Config reload command
+      vim.api.nvim_create_user_command("ReloadConfig", function()
+        -- Clear loaded modules to force reload
+        for name, _ in pairs(package.loaded) do
+          if name:match "^user" or name:match "^custom" or name:match "^polyfill" then package.loaded[name] = nil end
+        end
+        -- Reload the main config
+        vim.cmd.source(vim.env.MYVIMRC)
+        vim.notify("Config reloaded!", vim.log.levels.INFO)
+      end, {})
+    end,
   },
 }
