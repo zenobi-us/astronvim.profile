@@ -1,4 +1,3 @@
-
 # AGENTS.md
 
 > [!NOTE]
@@ -42,7 +41,7 @@
 **Quick commands:**
 ```bash
 # Project overview (run once per session)
-memoria_get_project_blueprint(path="/mnt/Store/Projects/Mine/Github/opentasks")
+memoria_get_project_blueprint(path="$(pwd)")
 
 # Find files for a task
 memoria_predict_coding_approach(problemDescription="add task filtering by assignee")

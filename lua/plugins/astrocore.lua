@@ -203,13 +203,13 @@ return {
         ["<S-Up>"] = { "v<Up>", desc = "Select up" },
         ["<S-Down>"] = { "v<Down>", desc = "Select down" },
 
-        -- tables with just a `desc` key will be registered with which-key if it's installed
-        -- this is useful for naming menus
-        -- ["<Leader>b"] = { desc = "Buffers" },
+         -- tables with just a `desc` key will be registered with which-key if it's installed
+         -- this is useful for naming menus
+         -- ["<Leader>b"] = { desc = "Buffers" },
 
-        -- setting a mapping to false will disable it
-        -- ["<C-S>"] = false,
-      },
+         -- setting a mapping to false will disable it
+         -- ["<C-S>"] = false,
+       },
       i = {
         -- save file in insert mode without leaving insert mode
         ["<C-S>"] = { function() vim.api.nvim_command "write" end, desc = "Save file" },
@@ -374,10 +374,21 @@ return {
       )
 
       -- Auto-enter insert mode in sidekick_terminal buffers
-      vim.api.nvim_create_autocmd("BufEnter", {
-        pattern = "sidekick_terminal",
-        callback = function() vim.cmd "startinsert" end,
-      })
+       vim.api.nvim_create_autocmd("BufEnter", {
+         pattern = "sidekick_terminal",
+         callback = function() vim.cmd "startinsert" end,
+       })
+
+       -- Load launch.json when nvim-dap-view opens
+       vim.api.nvim_create_autocmd("FileType", {
+         pattern = "dapui_*",
+         callback = function()
+           local ok, dap_ext = pcall(require, "dap.ext.vscode")
+           if ok then
+             dap_ext.load_launchjs()
+           end
+         end,
+       })
 
       -- Create custom quit command with confirmation
       local function show_quit_confirm()

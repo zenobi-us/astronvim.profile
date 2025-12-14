@@ -9,5 +9,6 @@ return {
   { import = "astrocommunity.motion.mini-move" },
   { import = "astrocommunity.completion.copilot-lua-cmp" },
   { import = "astrocommunity.search.grug-far-nvim" },
+  { import = "astrocommunity.debugging.nvim-dap-view" },
   -- import/override with your plugins folder
 }

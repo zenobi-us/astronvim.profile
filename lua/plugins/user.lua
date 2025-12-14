@@ -32,33 +32,51 @@ return {
     },
   },
 
-  -- Ctrl+Click for goto definition
-  {
-    "neovim/nvim-lspconfig",
-    init = function()
-      vim.keymap.set("n", "<C-LeftMouse>", function() vim.lsp.buf.definition() end, { noremap = true, silent = true })
-    end,
-  },
+   -- Ctrl+Click for goto definition
+   {
+     "neovim/nvim-lspconfig",
+     init = function()
+       vim.keymap.set("n", "<C-LeftMouse>", function() vim.lsp.buf.definition() end, { noremap = true, silent = true })
+     end,
+   },
 
-  -- Customize mini.move keybindings
-  {
-    "echasnovski/mini.move",
-    opts = {
-      mappings = {
-        -- Use Ctrl+Shift+Arrow keys for all directions
-        left = "<C-S-Left>",
-        right = "<C-S-Right>",
-        up = "<C-S-Up>",
-        down = "<C-S-Down>",
-        line_left = "<C-S-Left>",
-        line_right = "<C-S-Right>",
-        line_up = "<C-S-Up>",
-        line_down = "<C-S-Down>",
-      },
-    },
-  },
+   -- Customize mini.move keybindings
+   {
+     "echasnovski/mini.move",
+     opts = {
+       mappings = {
+         -- Use Ctrl+Shift+Arrow keys for all directions
+         left = "<C-S-Left>",
+         right = "<C-S-Right>",
+         up = "<C-S-Up>",
+         down = "<C-S-Down>",
+         line_left = "<C-S-Left>",
+         line_right = "<C-S-Right>",
+         line_up = "<C-S-Up>",
+         line_down = "<C-S-Down>",
+       },
+     },
+   },
 
-  -- Buffer mode manager - automatically switch to insert/normal mode based on buffer type
+   -- Shift+Arrow keys for selections in normal and insert mode
+   {
+     "folke/which-key.nvim",
+     init = function()
+       -- Normal mode: Shift+Arrow selects text
+       vim.keymap.set("n", "<S-Left>", "v<Left>", { noremap = true, silent = true })
+       vim.keymap.set("n", "<S-Right>", "v<Right>", { noremap = true, silent = true })
+       vim.keymap.set("n", "<S-Up>", "v<Up>", { noremap = true, silent = true })
+       vim.keymap.set("n", "<S-Down>", "v<Down>", { noremap = true, silent = true })
+
+       -- Insert mode: Shift+Arrow selects text and exits insert mode
+       vim.keymap.set("i", "<S-Left>", "<Esc>v<Left>", { noremap = true, silent = true })
+       vim.keymap.set("i", "<S-Right>", "<Esc>v<Right>", { noremap = true, silent = true })
+       vim.keymap.set("i", "<S-Up>", "<Esc>v<Up>", { noremap = true, silent = true })
+       vim.keymap.set("i", "<S-Down>", "<Esc>v<Down>", { noremap = true, silent = true })
+     end,
+   },
+
+   -- Buffer mode manager - automatically switch to insert/normal mode based on buffer type
   {
     "mouse-peasant/buffermodes.nvim",
     dir = vim.env.HOME .. "/.config/nvim/lua/custom/mouse-peasant/buffermodes.nvim",
