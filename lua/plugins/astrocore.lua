@@ -74,6 +74,49 @@ return {
           desc = "Close buffer from tabline",
         },
 
+        -- Better buffer split keymaps using fzf-lua picker
+        ["<Leader>b\\"] = {
+          function()
+            local fzf = require("fzf-lua")
+            fzf.buffers({
+              winopts = { title = "Split Buffer Horizontally" },
+              actions = {
+                ["default"] = function(selected)
+                  if selected and #selected > 0 then
+                    local bufnr = tonumber(selected[1]:match("^%s*(%d+)"))
+                    if bufnr then
+                      vim.cmd("split")
+                      vim.api.nvim_set_current_buf(bufnr)
+                    end
+                  end
+                end,
+              },
+            })
+          end,
+          desc = "Horizontal split buffer",
+        },
+
+        ["<Leader>b|"] = {
+          function()
+            local fzf = require("fzf-lua")
+            fzf.buffers({
+              winopts = { title = "Split Buffer Vertically" },
+              actions = {
+                ["default"] = function(selected)
+                  if selected and #selected > 0 then
+                    local bufnr = tonumber(selected[1]:match("^%s*(%d+)"))
+                    if bufnr then
+                      vim.cmd("vsplit")
+                      vim.api.nvim_set_current_buf(bufnr)
+                    end
+                  end
+                end,
+              },
+            })
+          end,
+          desc = "Vertical split buffer",
+        },
+
         -- save file
         ["<C-S>"] = { function() vim.cmd.write() end, desc = "Save file" },
 

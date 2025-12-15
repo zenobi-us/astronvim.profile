@@ -23,6 +23,11 @@ return {
       vim.keymap.set("n", "<leader>fb", fzf.buffers, { desc = "Find buffers" })
       vim.keymap.set("n", "<leader>fh", fzf.help_tags, { desc = "Find help tags" })
       vim.keymap.set("n", "<leader>f/", fzf.search_history, { desc = "Search history" })
+      
+      -- Command palette keymaps using Snacks picker
+      vim.keymap.set("n", "<leader>fc", function() require("snacks").picker.commands() end, { desc = "Find commands" })
+      vim.keymap.set("n", "<leader>fk", function() require("snacks").picker.keymaps() end, { desc = "Find keymaps" })
+      vim.keymap.set("n", "<leader>fa", function() require("snacks").picker.autocmds() end, { desc = "Find autocmds" })
     end,
   },
 }
