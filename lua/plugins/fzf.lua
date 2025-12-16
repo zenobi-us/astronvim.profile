@@ -17,12 +17,12 @@ return {
         },
       }
 
-      -- Keymaps
-      vim.keymap.set("n", "<leader>ff", fzf.files, { desc = "Find files" })
-      vim.keymap.set("n", "<leader>fg", fzf.live_grep, { desc = "Find in files" })
-      vim.keymap.set("n", "<leader>fb", fzf.buffers, { desc = "Find buffers" })
-      vim.keymap.set("n", "<leader>fh", fzf.help_tags, { desc = "Find help tags" })
-      vim.keymap.set("n", "<leader>f/", fzf.search_history, { desc = "Search history" })
+      -- Keymaps (use <leader>sf instead of <leader>ff to avoid conflict with 'f' find-char motion)
+      -- vim.keymap.set("n", "<leader>sf", fzf.files, { desc = "Search files" })
+      -- vim.keymap.set("n", "<leader>sg", fzf.live_grep, { desc = "Search grep" })
+      -- vim.keymap.set("n", "<leader>sb", fzf.buffers, { desc = "Search buffers" })
+      -- vim.keymap.set("n", "<leader>sh", fzf.help_tags, { desc = "Search help tags" })
+      -- vim.keymap.set("n", "<leader>s/", fzf.search_history, { desc = "Search history" })
       
       -- Command palette keymaps using Snacks picker
       vim.keymap.set("n", "<leader>fc", function() require("snacks").picker.commands() end, { desc = "Find commands" })

@@ -77,38 +77,21 @@ return {
      end,
    },
 
-   -- Buffer mode manager - automatically switch to insert/normal mode based on buffer type
-   {
-     "mouse-peasant/buffermodes.nvim",
-     dir = vim.env.HOME .. "/.config/nvim/lua/custom/mouse-peasant/buffermodes.nvim",
-     opts = {
-       buffer_modes = {
-         terminal = "insert",
-         toggleterm = "insert",
-         sidekick_terminal = "insert",
-         ["neo-tree"] = "normal",
-       },
-     },
-     config = function()
-       local group = vim.api.nvim_create_augroup("TerminalInsertMode", { clear = true })
-       
-       -- Force insert mode for all terminal buffers (toggleterm, lazygit, etc)
-       vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "TermOpen" }, {
-         group = group,
-         callback = function()
-           -- Check if this is a terminal buffer
-           if vim.bo.buftype == "terminal" then
-             -- Use schedule to ensure buffer is fully initialized
-             vim.schedule(function()
-               if vim.fn.mode() ~= "i" then
-                 vim.cmd "startinsert"
-               end
-             end)
-           end
-         end,
-       })
-     end,
-   },
+    -- Buffer mode manager - automatically switch to insert/normal mode based on buffer type
+    {
+      "mouse-peasant/buffermodes.nvim",
+      dir = vim.env.HOME .. "/.config/nvim/lua/custom/mouse-peasant/buffermodes.nvim",
+      opts = {
+        buffer_modes = {
+          terminal = "insert",
+          toggleterm = "insert",
+          sidekick_terminal = "insert",
+          ["neo-tree"] = "normal",
+        },
+      },
+    },
+  -- @NOTE: Disabled for now - conflicts with other popup menus
+  --
   -- {
   --   "mouse-peasant/popup.nvim",
   --   dependencies = {

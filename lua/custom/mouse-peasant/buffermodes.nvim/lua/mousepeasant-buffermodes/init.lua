@@ -70,6 +70,14 @@ end
 M.on_enter_buffer = function(props)
   local bufnr = vim.api.nvim_get_current_buf()
 
+  -- Debug output
+  if M.opts.debug then
+    astrocore.notify(
+      "BufferModes Debug: buftype='" .. props.buftype .. "' filetype='" .. props.filetype .. "'",
+      vim.log.levels.DEBUG
+    )
+  end
+
   -- Try to find mode from opts, then from saved cache
   local target_mode = M.opts.buffer_modes[props.filetype]
     or M.opts.buffer_modes[props.buftype]
@@ -92,12 +100,14 @@ M.on_enter_buffer = function(props)
     astrocore.notify("BufferModes: Changing buffer " .. bufnr .. " to " .. target_mode .. " mode", vim.log.levels.DEBUG)
   end
 
-  -- Apply the mode
-  if mapped_mode == "i" then
-    vim.cmd "startinsert"
-  else
-    vim.cmd "stopinsert"
-  end
+   -- Apply the mode using schedule to ensure buffer is fully initialized
+   vim.schedule(function()
+     if mapped_mode == "i" then
+       vim.cmd "startinsert"
+     else
+       vim.cmd "stopinsert"
+     end
+   end)
 end
 
 return M
