@@ -151,16 +151,14 @@ return {
         statusline = false,
       },
       sources = { "filesystem", "document_symbols" },
-    },
-  },
-  -- == Examples of Adding Plugins ==
+   },
+   -- == Examples of Adding Plugins ==
 
-  "andweeb/presence.nvim",
-  {
-    "ray-x/lsp_signature.nvim",
-    event = "BufRead",
-    config = function() require("lsp_signature").setup() end,
-  },
+   {
+     "ray-x/lsp_signature.nvim",
+     event = "BufRead",
+     config = function() require("lsp_signature").setup() end,
+   },
 
   -- == Examples of Overriding Plugins ==
 
