@@ -1,5 +1,13 @@
 ---@type LazySpec
-local M = {}
+local M = {
+  setup = function() end,
+  config = function() end,
+  on_enter_buffer = function() end,
+}
+
+---@class BufferModeProps
+---@field buftype string
+---@field filetype string
 
 local setup_done = false
 
@@ -23,51 +31,9 @@ local LOGICAL_MODE_MAPPING = {
   v = "v",
 }
 
----@type fun(conf: table)
-M.config = function(conf)
-  if setup_done then return end
-
-  -- merge defaults with user config
-  M.opts = vim.tbl_deep_extend("force", M.opts, conf or {})
-
-  if not has_astrocore then
-    vim.notify("BufferModes: astrocore not found, please install astrocore for notifications", vim.log.levels.WARN)
-    return
-  end
-
-  local group = vim.api.nvim_create_augroup("BufferModes", { clear = true })
-
-  -- Save mode when leaving a buffer
-  vim.api.nvim_create_autocmd("BufLeave", {
-    group = group,
-    callback = function()
-      local bufnr = vim.api.nvim_get_current_buf()
-      local current_mode = vim.fn.mode()
-      buffer_mode_cache[bufnr] = current_mode
-    end,
-  })
-
-  vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
-    group = group,
-    callback = function()
-      local buftype = vim.bo.buftype
-      local filetype = vim.bo.filetype
-      M.on_enter_buffer { buftype = buftype, filetype = filetype }
-    end,
-  })
-end
-
-M.setup = function(conf)
-  M.config(conf)
-  setup_done = true
-end
-
----@class BufferModeProps
----@field buftype string
----@field filetype string
 
 ---@type fun(props: BufferModeProps)
-M.on_enter_buffer = function(props)
+local function on_enter_buffer(props)
   local bufnr = vim.api.nvim_get_current_buf()
 
   -- Debug output
@@ -108,6 +74,52 @@ M.on_enter_buffer = function(props)
        vim.cmd "stopinsert"
      end
    end)
+end
+
+
+---@type fun(conf: table)
+local function configure(conf)
+  if setup_done then return end
+
+  M.opts = conf
+
+  if not has_astrocore then
+    vim.notify("BufferModes: astrocore not found, please install astrocore for notifications", vim.log.levels.WARN)
+    return
+  end
+
+  local group = vim.api.nvim_create_augroup("BufferModes", { clear = true })
+
+  -- Save mode when leaving a buffer
+  vim.api.nvim_create_autocmd("BufLeave", {
+    group = group,
+    callback = function()
+      local bufnr = vim.api.nvim_get_current_buf()
+      local current_mode = vim.fn.mode()
+      buffer_mode_cache[bufnr] = current_mode
+    end,
+  })
+
+  vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "TermEnter"}, {
+    group = group,
+    callback = function()
+      local buftype = vim.bo.buftype
+      local filetype = vim.bo.filetype
+      on_enter_buffer { buftype = buftype, filetype = filetype }
+    end,
+  })
+
+  setup_done = true
+end
+
+---@type fun(conf: table)
+M.config = function(conf)
+  configure(conf)
+end
+
+---@type fun(conf: table)
+M.setup = function(conf)
+  configure(conf)
 end
 
 return M
