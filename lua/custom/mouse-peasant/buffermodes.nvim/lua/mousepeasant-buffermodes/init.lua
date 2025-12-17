@@ -21,61 +21,26 @@ M.opts = {
   buffer_modes = {},
 }
 
--- This mapping allows users to be a bit lazy in how they specify modes
-local LOGICAL_MODE_MAPPING = {
-  insert = "i",
-  i = "i",
-  normal = "n",
-  n = "n",
-  visual = "v",
-  v = "v",
-}
-
-
----@type fun(props: BufferModeProps)
-local function on_enter_buffer(props)
-  local bufnr = vim.api.nvim_get_current_buf()
-
-  -- Debug output
-  if M.opts.debug then
-    astrocore.notify(
-      "BufferModes Debug: buftype='" .. props.buftype .. "' filetype='" .. props.filetype .. "'",
-      vim.log.levels.DEBUG
-    )
-  end
-
-  -- Try to find mode from opts, then from saved cache
-  local target_mode = M.opts.buffer_modes[props.filetype]
-    or M.opts.buffer_modes[props.buftype]
-    or buffer_mode_cache[bufnr]
-
-  -- Return early if no mode found
-  if not target_mode then return end
-
-  -- Map logical mode names to mode codes
-  local mapped_mode = LOGICAL_MODE_MAPPING[target_mode]
-  if not mapped_mode then
-    astrocore.notify(
-      "BufferModes: Unknown target mode '" .. target_mode .. "'. Valid modes: insert, normal, visual",
-      vim.log.levels.WARN
-    )
-    return
-  end
-
-  if M.opts.debug then
-    astrocore.notify("BufferModes: Changing buffer " .. bufnr .. " to " .. target_mode .. " mode", vim.log.levels.DEBUG)
-  end
-
-   -- Apply the mode using schedule to ensure buffer is fully initialized
-   vim.schedule(function()
-     if mapped_mode == "i" then
-       vim.cmd "startinsert"
-     else
-       vim.cmd "stopinsert"
-     end
-   end)
+local function set_insert_mode()
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("i", true, false, true), "n", false)
 end
 
+local function set_normal_mode()
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+end
+local function set_visual_mode()
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("v", true, false, true), "n", false)
+end
+
+-- This mapping allows users to be a bit lazy in how they specify modes
+local MODE_FUNC = {
+  insert = set_insert_mode,
+  i = set_insert_mode,
+  normal = set_normal_mode,
+  n = set_normal_mode,
+  visual = set_visual_mode,
+  v = set_visual_mode,
+}
 
 ---@type fun(conf: table)
 local function configure(conf)
@@ -100,12 +65,70 @@ local function configure(conf)
     end,
   })
 
-  vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "TermEnter"}, {
+  vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "TermEnter" }, {
     group = group,
     callback = function()
       local buftype = vim.bo.buftype
       local filetype = vim.bo.filetype
-      on_enter_buffer { buftype = buftype, filetype = filetype }
+      local props = {
+        buftype = buftype,
+        filetype = filetype,
+      }
+
+      local bufnr = vim.api.nvim_get_current_buf()
+
+      -- Debug output
+      if M.opts.debug then
+        astrocore.notify(
+          "BufferModes Debug: buftype='" .. props.buftype .. "' filetype='" .. props.filetype .. "'",
+          vim.log.levels.DEBUG
+        )
+      end
+
+      -- Try to find mode from opts, then from saved cache
+      local target_mode = M.opts.buffer_modes[props.filetype]
+      local target_match = "buffertype"
+
+      if not target_mode then
+        target_mode = M.opts.buffer_modes[props.buftype]
+        target_match = "buftype"
+      end
+
+      if not target_mode then
+        target_mode = buffer_mode_cache[bufnr]
+        target_match = "cache"
+      end
+
+      if M.opts.debug then
+        astrocore.notify(
+          "BufferModes \n"
+            .. "  Target match: "
+            .. target_match
+            .. "\n"
+            .. "  BuferNo: "
+            .. bufnr
+            .. "\n"
+            .. "  Buftype: '"
+            .. props.buftype
+            .. "'\n"
+            .. "  Target mode: '"
+            .. (target_mode or "nil"),
+          vim.log.levels.DEBUG,
+          {}
+        )
+      end
+
+      -- set the mode
+      -- vim.schedule(function() vim.api.nvim_feedkeys(mapped_mode, "n", false) end)
+      --
+      vim.schedule(function()
+        local mode_func = MODE_FUNC[target_mode]
+        if mode_func then
+          mode_func()
+        else
+          astrocore.notify("BufferModes: No function mapped for target mode", vim.log.levels.WARN)
+        end
+      end)
     end,
   })
 
@@ -113,13 +136,9 @@ local function configure(conf)
 end
 
 ---@type fun(conf: table)
-M.config = function(conf)
-  configure(conf)
-end
+M.config = function(conf) configure(conf) end
 
 ---@type fun(conf: table)
-M.setup = function(conf)
-  configure(conf)
-end
+M.setup = function(conf) configure(conf) end
 
 return M
