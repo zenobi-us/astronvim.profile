@@ -22,14 +22,16 @@ M.opts = {
 }
 
 local function set_insert_mode()
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("i", true, false, true), "n", false)
+  -- type <C-o>i to enter insert mode from any mode
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>i", true, false, true), "n", false)
 end
 
 local function set_normal_mode()
   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
 end
+
 local function set_visual_mode()
-  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("v", true, false, true), "n", false)
+  vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>v", true, false, true), "n", false)
 end
 
 -- This mapping allows users to be a bit lazy in how they specify modes
