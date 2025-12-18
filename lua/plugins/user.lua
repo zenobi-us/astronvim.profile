@@ -275,18 +275,6 @@ return {
     end,
   },
 
-  -- GitHub integration for code reviews
-  {
-    "ldelossa/gh.nvim",
-    dependencies = {
-      {
-        "ldelossa/litee.nvim",
-        config = function() require("litee.lib").setup() end,
-      },
-    },
-    config = function() require("litee.gh").setup() end,
-  },
-
   -- Configure Copilot to use a specific Node.js version from mise
   {
     "zbirenbaum/copilot.lua",

@@ -240,19 +240,23 @@ return {
         ["<A-Left>"] = { "<C-o>", desc = "Go back in navigation history" },
         ["<A-Right>"] = { "<C-i>", desc = "Go forward in navigation history" },
 
-        -- Shift+Arrow keys for text selection
-        ["<S-Left>"] = { "v<Left>", desc = "Select to the left" },
-        ["<S-Right>"] = { "v<Right>", desc = "Select to the right" },
-        ["<S-Up>"] = { "v<Up>", desc = "Select up" },
-        ["<S-Down>"] = { "v<Down>", desc = "Select down" },
+         -- Shift+Arrow keys for text selection
+         ["<S-Left>"] = { "v<Left>", desc = "Select to the left" },
+         ["<S-Right>"] = { "v<Right>", desc = "Select to the right" },
+         ["<S-Up>"] = { "v<Up>", desc = "Select up" },
+         ["<S-Down>"] = { "v<Down>", desc = "Select down" },
 
-         -- tables with just a `desc` key will be registered with which-key if it's installed
-         -- this is useful for naming menus
-         -- ["<Leader>b"] = { desc = "Buffers" },
+         -- Undo and Redo
+         ["<C-z>"] = { "u", desc = "Undo" },
+         ["<C-S-z>"] = { "<C-r>", desc = "Redo" },
 
-         -- setting a mapping to false will disable it
-         -- ["<C-S>"] = false,
-       },
+          -- tables with just a `desc` key will be registered with which-key if it's installed
+          -- this is useful for naming menus
+          -- ["<Leader>b"] = { desc = "Buffers" },
+
+          -- setting a mapping to false will disable it
+          -- ["<C-S>"] = false,
+        },
       i = {
         -- save file in insert mode without leaving insert mode
         ["<C-S>"] = { function() vim.api.nvim_command "write" end, desc = "Save file" },
