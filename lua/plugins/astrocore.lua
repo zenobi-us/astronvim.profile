@@ -77,42 +77,42 @@ return {
         -- Better buffer split keymaps using fzf-lua picker
         ["<Leader>b\\"] = {
           function()
-            local fzf = require("fzf-lua")
-            fzf.buffers({
+            local fzf = require "fzf-lua"
+            fzf.buffers {
               winopts = { title = "Split Buffer Horizontally" },
               actions = {
                 ["default"] = function(selected)
                   if selected and #selected > 0 then
-                    local bufnr = tonumber(selected[1]:match("^%s*(%d+)"))
+                    local bufnr = tonumber(selected[1]:match "^%s*(%d+)")
                     if bufnr then
-                      vim.cmd("split")
+                      vim.cmd "split"
                       vim.api.nvim_set_current_buf(bufnr)
                     end
                   end
                 end,
               },
-            })
+            }
           end,
           desc = "Horizontal split buffer",
         },
 
         ["<Leader>b|"] = {
           function()
-            local fzf = require("fzf-lua")
-            fzf.buffers({
+            local fzf = require "fzf-lua"
+            fzf.buffers {
               winopts = { title = "Split Buffer Vertically" },
               actions = {
                 ["default"] = function(selected)
                   if selected and #selected > 0 then
-                    local bufnr = tonumber(selected[1]:match("^%s*(%d+)"))
+                    local bufnr = tonumber(selected[1]:match "^%s*(%d+)")
                     if bufnr then
-                      vim.cmd("vsplit")
+                      vim.cmd "vsplit"
                       vim.api.nvim_set_current_buf(bufnr)
                     end
                   end
                 end,
               },
-            })
+            }
           end,
           desc = "Vertical split buffer",
         },
@@ -240,23 +240,29 @@ return {
         ["<A-Left>"] = { "<C-o>", desc = "Go back in navigation history" },
         ["<A-Right>"] = { "<C-i>", desc = "Go forward in navigation history" },
 
-         -- Shift+Arrow keys for text selection
-         ["<S-Left>"] = { "v<Left>", desc = "Select to the left" },
-         ["<S-Right>"] = { "v<Right>", desc = "Select to the right" },
-         ["<S-Up>"] = { "v<Up>", desc = "Select up" },
-         ["<S-Down>"] = { "v<Down>", desc = "Select down" },
+        -- Shift+Arrow keys for text selection
+        ["<S-Left>"] = { "v<Left>", desc = "Select to the left" },
+        ["<S-Right>"] = { "v<Right>", desc = "Select to the right" },
+        ["<S-Up>"] = { "v<Up>", desc = "Select up" },
+        ["<S-Down>"] = { "v<Down>", desc = "Select down" },
 
-         -- Undo and Redo
-         ["<C-z>"] = { "u", desc = "Undo" },
-         ["<C-S-z>"] = { "<C-r>", desc = "Redo" },
+        -- Undo and Redo
+        ["<C-z>"] = { "u", desc = "Undo" },
+        ["<C-S-z>"] = { "<C-r>", desc = "Redo" },
 
-          -- tables with just a `desc` key will be registered with which-key if it's installed
-          -- this is useful for naming menus
-          -- ["<Leader>b"] = { desc = "Buffers" },
+        -- tables with just a `desc` key will be registered with which-key if it's installed
+        -- this is useful for naming menus
+        -- ["<Leader>b"] = { desc = "Buffers" },
 
-          -- setting a mapping to false will disable it
-          -- ["<C-S>"] = false,
+        -- setting a mapping to false will disable it
+        -- ["<C-S>"] = false,
+
+        -- Toggle last used toggleterm layout (Ctrl+~)
+        ["<C-~>"] = {
+          function() require("toggleterm").toggle() end,
+          desc = "Toggle last used toggleterm",
         },
+      },
       i = {
         -- save file in insert mode without leaving insert mode
         ["<C-S>"] = { function() vim.api.nvim_command "write" end, desc = "Save file" },
@@ -299,6 +305,12 @@ return {
             end
           end,
           desc = "Accept Copilot suggestion or tab",
+        },
+
+        -- Toggle last used toggleterm layout (Ctrl+~)
+        ["<C-~>"] = {
+          function() require("toggleterm").toggle() end,
+          desc = "Toggle last used toggleterm",
         },
 
         ["<M-]>"] = {
@@ -420,22 +432,14 @@ return {
         { noremap = true, silent = true, desc = "Toggle last used toggleterm" }
       )
 
-      -- Auto-enter insert mode in sidekick_terminal buffers
-       vim.api.nvim_create_autocmd("BufEnter", {
-         pattern = "sidekick_terminal",
-         callback = function() vim.cmd "startinsert" end,
-       })
-
-       -- Load launch.json when nvim-dap-view opens
-       vim.api.nvim_create_autocmd("FileType", {
-         pattern = "dapui_*",
-         callback = function()
-           local ok, dap_ext = pcall(require, "dap.ext.vscode")
-           if ok then
-             dap_ext.load_launchjs()
-           end
-         end,
-       })
+      -- Load launch.json when nvim-dap-view opens
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "dapui_*",
+        callback = function()
+          local ok, dap_ext = pcall(require, "dap.ext.vscode")
+          if ok then dap_ext.load_launchjs() end
+        end,
+      })
 
       -- Create custom quit command with confirmation
       local function show_quit_confirm()
