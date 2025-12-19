@@ -3,6 +3,7 @@ return {
   -- Configure which-key to show LSP keymaps
   {
     "folke/which-key.nvim",
+    enabled = false,
     opts = {
       window = {
         width = 120,

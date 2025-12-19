@@ -16,5 +16,6 @@ return {
   { import = "astrocommunity.pack.html-css" },
   { import = "astrocommunity.pack.typescript" },
   { import = "astrocommunity.colorscheme.nightfox-nvim" },
+  { import = "astrocommunity.keybinding.mini-clue" },
   -- import/override with your plugins folder
 }
