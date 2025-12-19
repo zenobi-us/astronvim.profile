@@ -125,9 +125,9 @@ local function configure(conf)
       --
       vim.schedule(function()
         local mode_func = MODE_FUNC[target_mode]
-        if mode_func then
-          mode_func()
-        else
+        if mode_func then mode_func() end
+
+        if not mode_func and M.opts.debug then
           astrocore.notify("BufferModes: No function mapped for target mode", vim.log.levels.WARN)
         end
       end)
