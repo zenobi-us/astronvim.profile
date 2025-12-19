@@ -46,8 +46,8 @@ return {
         { "<leader>gws", desc = "Switch worktree" },
         { "<leader>gwn", desc = "New worktree" },
         { "<leader>gwc", desc = "Create worktree from existing branch" },
-         { "<leader>gwr", desc = "Remove worktree" },
-         { "<leader>gy", desc = "Get GitHub URL" },
+        { "<leader>gwr", desc = "Remove worktree" },
+        { "<leader>gy", desc = "Get GitHub URL" },
         { "<leader>l", group = "LSP" },
         { "<leader>la", desc = "Code action" },
         { "<leader>lA", desc = "Source action" },
@@ -263,26 +263,26 @@ return {
     end,
   },
 
-    -- Git file history viewer
-    {
-      "sindrets/diffview.nvim",
-      dependencies = "nvim-lua/plenary.nvim",
-      config = function()
-        require("diffview").setup()
-        vim.keymap.set("n", "<leader>gfh", "<cmd>DiffviewFileHistory<cr>", { silent = true, desc = "File history" })
-      end,
-    },
+  -- Git file history viewer
+  {
+    "sindrets/diffview.nvim",
+    dependencies = "nvim-lua/plenary.nvim",
+    config = function()
+      require("diffview").setup()
+      vim.keymap.set("n", "<leader>gfh", "<cmd>DiffviewFileHistory %<cr>", { silent = true, desc = "File history" })
+    end,
+  },
 
-   -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
-   {
-     "L3MON4D3/LuaSnip",
-     config = function(plugin, opts)
-       require "astronvim.plugins.configs.luasnip"(plugin, opts) -- include the default astronvim config that calls the setup call
-       -- add more custom luasnip configuration such as filetype extend or custom snippets
-       local luasnip = require "luasnip"
-       luasnip.filetype_extend("javascript", { "javascriptreact" })
-     end,
-   },
+  -- You can also easily customize additional setup of plugins that is outside of the plugin's setup call
+  {
+    "L3MON4D3/LuaSnip",
+    config = function(plugin, opts)
+      require "astronvim.plugins.configs.luasnip"(plugin, opts) -- include the default astronvim config that calls the setup call
+      -- add more custom luasnip configuration such as filetype extend or custom snippets
+      local luasnip = require "luasnip"
+      luasnip.filetype_extend("javascript", { "javascriptreact" })
+    end,
+  },
 
   -- Configure Copilot to use a specific Node.js version from mise
   {
@@ -344,6 +344,4 @@ return {
       )
     end,
   },
-
-
 }
