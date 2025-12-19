@@ -4,6 +4,12 @@ return {
   {
     "folke/which-key.nvim",
     opts = {
+      window = {
+        width = 0.9,
+        height = 0.9,
+        border = "rounded",
+      },
+      layout = "vertical",
       spec = {
         { "<leader>f", group = "Find" },
         { "<leader>ff", desc = "Find files" },
