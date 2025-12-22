@@ -39,16 +39,75 @@ nvim
 
 - **AstroNvim Core**: astrocore, astrolsp, astroui — base IDE framework with LSP integration
 - **Search & Navigation**: fzf-lua, Snacks.nvim picker — fuzzy finding and command/keymap discovery
-- **AI Coding**: CodeCompanion — AI pair programming with img-clip for image insertion
+- **AI Coding**: CodeCompanion — AI pair programming with img-clip for image insertion, GitHub Copilot — AI code suggestions
 - **Testing**: neotest + neotest-vitest — run and debug tests inline
 - **Git**: octo.nvim, worktrees.nvim, diffview.nvim — GitHub interaction, git worktree management, and file history
 - **Code Quality**: conform, none-ls, mason — formatting, linting, and tool management
 - **Code Search**: grug-far — find and replace with preview
 - **UI/UX**: neotree, scrollbar, symbol-usage, treesitter — file tree, scroll position, symbols
 - **Terminal**: toggleterm — floating terminal toggle
-- **Copilot**: copilot.nvim — GitHub Copilot integration with suggestion cycling
 
 ## Keymaps
+
+
+## Quickstart
+
+**Most Common Tasks:**
+
+File Navigation
+
+| Task                                    | Keymap                  |
+| --------------------------------------- | ----------------------- |
+| Find and open file                      | `<Leader>fc`            |
+| Find and open recent file               | `<Leader>fO`            |
+| Toggle file explorer                    | `<Leader>e`             |
+| Search project (with word under cursor) | `<C-f>`                 |
+| Find and replace (with selection)       | `<C-S-f>` (visual mode) |
+
+Testing
+
+| Task                                    | Keymap                  |
+| --------------------------------------- | ----------------------- |
+| Run nearest test                        | `<Leader>tr`            |
+
+LSP
+
+| Task                                    | Keymap                  |
+| --------------------------------------- | ----------------------- |
+| Go to definition                        | `gd`                    |
+| Rename symbol                           | `<Leader>lr`            |
+| Code actions                            | `<Leader>la`            |
+| Format file                             | `<Leader>lf`            |
+
+File Editing
+
+| Task                                    | Keymap                  |
+| --------------------------------------- | ----------------------- |
+| Save file                               | `<C-S>`                 |
+| Close buffer                            | `<C-W>`                 |
+| Clone line                              | `<C-S-d>`               |
+| Delete line                             | `<C-S-k>`               |
+| Move Line Up                            | `<C-S-Up>`              |
+| Move Line Down                          | `<C-S-Down>`            |
+
+Terminal
+
+| Task                                    | Keymap                  |
+| --------------------------------------- | ----------------------- |
+| Toggle terminal                         | `<Leader>tf`            |
+
+Git Worktrees
+
+| Task                                    | Keymap                  |
+| --------------------------------------- | ----------------------- |
+| Switch git worktree                     | `<Leader>gws`           |
+
+Debugging
+
+| Task                                    | Keymap                  |
+| --------------------------------------- | ----------------------- |
+| Debug Interface                         | `<Leader>du`            |
+
 
 ### Normal Mode
 
@@ -141,32 +200,3 @@ nvim
 | `<C-x>`   | Cut selection                            |
 | `<C-v>`   | Paste over selection                     |
 
-### Terminal Mode
-
-| Keymap  | Action                    |
-| ------- | ------------------------- |
-| `<C-~>` | Toggle last used terminal |
-
-## Quickstart
-
-**Most Common Tasks:**
-
-| Task                                    | Keymap                  |
-| --------------------------------------- | ----------------------- |
-| Find and open file                      | `<Leader>fc`            |
-| Find keymap                             | `<Leader>fk`            |
-| Search project (with word under cursor) | `<C-f>`                 |
-| Find and replace (with selection)       | `<C-S-f>` (visual mode) |
-| Run nearest test                        | `<Leader>tr`            |
-| Go to definition                        | `gd`                    |
-| Rename symbol                           | `<Leader>lr`            |
-| Code actions                            | `<Leader>la`            |
-| Format file                             | `<Leader>lf`            |
-| Save file                               | `<C-S>`                 |
-| Close buffer                            | `<C-W>`                 |
-| Clone line                              | `<C-S-d>`               |
-| Delete line                             | `<C-S-k>`               |
-| Next buffer                             | `]b`                    |
-| Previous buffer                         | `[b`                    |
-| Toggle terminal                         | `<C-~>`                 |
-| Switch git worktree                     | `<Leader>gws`           |
