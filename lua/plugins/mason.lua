@@ -11,10 +11,10 @@ return {
       ensure_installed = {
         -- install language servers
         "lua-language-server",
-        "typescript-language-server",
         "eslint-lsp",
         "json-lsp",
         "tailwindcss-language-server",
+        "vtsls",
 
         -- install debuggers
         "debugpy",
