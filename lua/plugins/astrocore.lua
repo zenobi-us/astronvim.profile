@@ -346,16 +346,16 @@ return {
         ["<Select>"] = { "<C-o>$", desc = "End key (Alacritty)" },
 
         -- Text selection with Shift+Arrow keys (character/line at a time)
-        ["<S-Left>"] = { "<C-o>v<C-o>h", desc = "Select character left" },
-        ["<S-Right>"] = { "<C-o>v<C-o>l", desc = "Select character right" },
-        ["<S-Up>"] = { "<C-o>v<C-o>k", desc = "Select line up" },
-        ["<S-Down>"] = { "<C-o>v<C-o>j", desc = "Select line down" },
+        ["<S-Left>"] = { "<C-o>vh", desc = "Select character left" },
+        ["<S-Right>"] = { "<C-o>vl", desc = "Select character right" },
+        ["<S-Up>"] = { "<C-o>vk", desc = "Select line up" },
+        ["<S-Down>"] = { "<C-o>vj", desc = "Select line down" },
 
         -- Text selection with Ctrl+Shift+Arrow keys (word/line at a time)
-        ["<C-S-Left>"] = { "<C-o>v<C-o>b", desc = "Select word left" },
-        ["<C-S-Right>"] = { "<C-o>v<C-o>w", desc = "Select word right" },
-        ["<C-S-Up>"] = { "<C-o>v<C-o>k", desc = "Select line up" },
-        ["<C-S-Down>"] = { "<C-o>v<C-o>j", desc = "Select line down" },
+        ["<C-S-Left>"] = { "<C-o>vb", desc = "Select word left" },
+        ["<C-S-Right>"] = { "<C-o>vw", desc = "Select word right" },
+        ["<C-S-Up>"] = { "<C-o>vk", desc = "Select line up" },
+        ["<C-S-Down>"] = { "<C-o>vj", desc = "Select line down" },
 
         -- Copilot keymaps
         ["<Tab>"] = {
@@ -470,6 +470,12 @@ return {
           function() vim.cmd 'normal! "+p' end,
           desc = "Paste over selection",
         },
+
+        -- Shift+Arrow keys for text selection
+        ["<S-Left>"] = { "<Left>", desc = "Select to the left" },
+        ["<S-Right>"] = { "<Right>", desc = "Select to the right" },
+        ["<S-Up>"] = { "<Up>", desc = "Select up" },
+        ["<S-Down>"] = { "<Down>", desc = "Select down" },
       },
       c = {
         -- Delete whole word with Ctrl+Backspace in command mode
