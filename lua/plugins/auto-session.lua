@@ -16,6 +16,7 @@ return {
     auto_restore_enabled = true,
     auto_save_enabled = true,
     auto_session_root_dir = vim.fn.stdpath("data") .. "/sessions/",
+    bypass_session_save_file_corrupted = true,
     session_lens = {
       previewer = false,
       theme_conf = { border = true },

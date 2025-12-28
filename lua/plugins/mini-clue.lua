@@ -2,11 +2,11 @@ return {
   "echasnovski/mini.clue",
   opts = {
     window = {
-      delay = 0,
+      delay = 100,
       config = {
         row = "auto",
         col = "auto",
-      }
-    }
-  }
+      },
+    },
+  },
 }
