@@ -46,6 +46,7 @@ return {
         modeline = true, -- enable modeline parsing
         modelines = 5, -- check first/last 5 lines for modelines
         whichwrap = "b,s,<,>,[,]", -- allow arrow keys to wrap across lines
+         guicursor = "n-v-c:block,i-ci-ve:ver75,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor", -- thicker insert cursor
       },
       g = { -- vim.g.<key>
         -- configure global vim variables (vim.g)

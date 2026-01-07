@@ -10,7 +10,7 @@ return {
   -- { import = "astrocommunity.completion.copilot-lua-cmp" },
   { import = "astrocommunity.editing-support.codecompanion-nvim" },
   { import = "astrocommunity.search.grug-far-nvim" },
-  { import = "astrocommunity.debugging.nvim-dap-view" },
+  { import = "astrocommunity.utility.lua-json5" },
   { import = "astrocommunity.pack.lua" },
   { import = "astrocommunity.pack.go" },
   { import = "astrocommunity.pack.html-css" },
