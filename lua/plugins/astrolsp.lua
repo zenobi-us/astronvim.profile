@@ -10,7 +10,7 @@ return {
   opts = {
     -- Configuration table of features provided by AstroLSP
     features = {
-      codelens = true, -- enable/disable codelens refresh on start
+      codelens = false, -- enable/disable codelens refresh on start
       inlay_hints = false, -- enable/disable inlay hints on start
       semantic_tokens = true, -- enable/disable semantic token highlighting
     },
@@ -55,20 +55,20 @@ return {
               -- },
               {
                 fileMatch = { "tsconfig.json", "tsconfig.*.json" },
-                url = "https://json.schemastore.org/tsconfig.json"
+                url = "https://json.schemastore.org/tsconfig.json",
               },
               {
                 fileMatch = { ".prettierrc", ".prettierrc.json" },
-                url = "https://json.schemastore.org/prettierrc.json"
+                url = "https://json.schemastore.org/prettierrc.json",
               },
               {
                 fileMatch = { ".eslintrc", ".eslintrc.json" },
-                url = "https://json.schemastore.org/eslintrc.json"
+                url = "https://json.schemastore.org/eslintrc.json",
               },
             },
-            validate = { enable = true }
-          }
-        }
+            validate = { enable = true },
+          },
+        },
       },
       tailwindcss = {
         settings = {
@@ -157,9 +157,11 @@ return {
           cond = "textDocument/codeAction",
         },
         ["<Leader>lA"] = {
-          function() vim.lsp.buf.code_action {
-            context = { only = { "source" } }
-          } end,
+          function()
+            vim.lsp.buf.code_action {
+              context = { only = { "source" } },
+            }
+          end,
           desc = "Source action",
           cond = "textDocument/codeAction",
         },
