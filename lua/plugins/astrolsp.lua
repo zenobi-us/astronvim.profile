@@ -217,6 +217,11 @@ return {
     on_attach = function(client, bufnr)
       -- this would disable semanticTokensProvider for all clients
       -- client.server_capabilities.semanticTokensProvider = nil
+
+      -- Integrate codesettings.nvim to apply project-local LSP settings
+      if require("lazy").plugins["codesettings.nvim"] then
+        require("codesettings").apply_to_client(client)
+      end
     end,
   },
 }
