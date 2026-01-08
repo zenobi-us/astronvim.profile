@@ -259,12 +259,13 @@ return {
         ["<Leader>f"] = { desc = "Find" },
         ["<Leader>g"] = { desc = "Git" },
         ["<Leader>gh"] = { desc = "GitHub" },
-        ["<Leader>ghc"] = { desc = "Commits" },
-        ["<Leader>ghi"] = { desc = "Issues" },
-        ["<Leader>ghl"] = { desc = "Litee" },
-        ["<Leader>ghp"] = { desc = "Pull Request" },
-        ["<Leader>ghr"] = { desc = "Review" },
-        ["<Leader>ght"] = { desc = "Threads" },
+         ["<Leader>ghc"] = { desc = "Commits" },
+         ["<Leader>ghi"] = { desc = "Issues" },
+         ["<Leader>ghl"] = { desc = "Litee" },
+         ["<Leader>ghp"] = { desc = "Pull Request" },
+         ["<Leader>ghr"] = { desc = "Review" },
+         ["<Leader>ght"] = { desc = "Threads" },
+         ["<Leader>ghh"] = { desc = "GitHub dashboard" },
         ["<Leader>gw"] = { desc = "Worktree" },
         ["<Leader>h"] = { desc = "Help" },
         ["<Leader>l"] = { desc = "LSP" },
@@ -500,6 +501,24 @@ return {
         function() require("toggleterm").toggle() end,
         { noremap = true, silent = true, desc = "Toggle last used toggleterm" }
       )
+
+      -- Open GitHub dashboard in floating terminal
+      vim.keymap.set("n", "<Leader>ghh", function()
+        local Terminal = require("toggleterm.terminal").Terminal
+        local gh_dash = Terminal:new({
+          cmd = "gh-dash",
+          hidden = true,
+          direction = "float",
+          float_opts = {
+            border = "rounded",
+          },
+          on_open = function(_)
+            vim.cmd "startinsert!"
+          end,
+          count = 100,
+        })
+        gh_dash:toggle()
+      end, { noremap = true, silent = true, desc = "Open GitHub dashboard" })
 
       -- Load launch.json when nvim-dap-view opens
       vim.api.nvim_create_autocmd("FileType", {

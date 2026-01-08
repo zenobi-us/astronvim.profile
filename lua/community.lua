@@ -8,7 +8,7 @@ return {
   { import = "astrocommunity.test.neotest" },
   { import = "astrocommunity.motion.mini-move" },
   -- { import = "astrocommunity.completion.copilot-lua-cmp" },
-  { import = "astrocommunity.editing-support.codecompanion-nvim" },
+  -- { import = "astrocommunity.editing-support.codecompanion-nvim" },
   { import = "astrocommunity.search.grug-far-nvim" },
   { import = "astrocommunity.utility.lua-json5" },
   { import = "astrocommunity.pack.lua" },
