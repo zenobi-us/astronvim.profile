@@ -43,6 +43,16 @@ return {
     ---@diagnostic disable: missing-fields
     config = {
       -- clangd = { capabilities = { offsetEncoding = "utf-8" } },
+      eslint = {
+        settings = {
+          workingDirectory = { mode = "auto" },
+          run = "onType",
+          rulesCustomizations = {},
+          problems = { shortenToSingleLine = false },
+          useESLintClass = false,
+          experimental = { useFlatConfig = nil },
+        },
+      },
       jsonls = {
         settings = {
           json = {
