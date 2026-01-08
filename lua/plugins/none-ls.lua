@@ -1,7 +1,4 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
--- Customize None-ls sources
-
+-- Null-ls for linting and formatting without LSP
 ---@type LazySpec
 return {
   "nvimtools/none-ls.nvim",

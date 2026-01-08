@@ -1,3 +1,5 @@
+-- Git worktrees management
+---@type LazySpec
 return {
   "Juksuu/worktrees.nvim",
   dependencies = {

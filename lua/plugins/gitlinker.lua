@@ -1,3 +1,4 @@
+-- Generate GitHub permalinks for code selections
 ---@type LazySpec
 return {
   "ruifm/gitlinker.nvim",

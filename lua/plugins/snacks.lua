@@ -1,3 +1,4 @@
+-- Dashboard, picker, and UI enhancements
 ---@type LazySpec
 return {
   {

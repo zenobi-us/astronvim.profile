@@ -1,3 +1,5 @@
+-- Display symbol usage in code
+---@type LazySpec
 return {
   "Wansmer/symbol-usage.nvim",
   event = "BufReadPre",

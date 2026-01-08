@@ -1,5 +1,4 @@
--- Customize Mason
-
+-- Package manager for language servers, formatters, and linters
 ---@type LazySpec
 return {
   -- use mason-tool-installer for automatically installing Mason packages

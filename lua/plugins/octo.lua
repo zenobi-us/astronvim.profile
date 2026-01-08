@@ -1,3 +1,4 @@
+-- GitHub integration for issues and pull requests
 ---@type LazySpec
 return {
   {

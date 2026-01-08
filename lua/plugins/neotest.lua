@@ -1,3 +1,4 @@
+-- Testing framework for multiple languages
 ---@type LazySpec
 return {
   {

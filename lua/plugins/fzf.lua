@@ -1,3 +1,5 @@
+-- Fuzzy finder using FZF
+---@type LazySpec
 return {
   {
     "ibhagwan/fzf-lua",

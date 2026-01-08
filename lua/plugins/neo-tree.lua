@@ -1,3 +1,4 @@
+-- File tree explorer with document symbols
 ---@type LazySpec
 return {
   "nvim-neo-tree/neo-tree.nvim",

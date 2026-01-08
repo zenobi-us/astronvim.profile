@@ -10,6 +10,55 @@
   - `### Keymaps > Quickstart` - quick list of common tasks with keymap links
   - Use writing/documentation skills to maintain clarity and consistency
 
+## Style
+
+### Plugins
+
+- each plugin defintion in it's own file under `lua/plugins/`
+- plugin files named after plugin, e.g. `lua/plugins/telescope.lua`
+- The only plugin allowed to contain keymaps is @lua/plugins/astrocore.lua
+- use below template for plugin files:
+
+```lua
+-- Plugin: telescope.nvim
+-- Description: Fuzzy finder and more
+-- URL: some url
+---@type LazySpec
+return {
+  "nvim-telescope/telescope.nvim",
+  dependencies = { "nvim-lua/plenary.nvim" },
+  config = function()
+    require("telescope").setup({
+      -- your telescope config here
+    })
+  end,
+}
+```
+
+### Custom Plugins
+
+Custom plugins are ones that we completely own and maintain. They follow a more verbose file structure to encourage clarity and maintainability.
+
+- They live under`lua/custom/<namespace>/<plugin_name>.nvim/`
+- Custom plugins are still loaded in `lua/plugins/<plugin_name>.lua` using lazy.nvim
+- Use `<namespace>` to group related plugins (e.g. `astrocore`, `myutils`, `inmemoria`, etc)
+- `<plugin_name>` should be descriptive of the plugin's purpose (e.g. `taskmanager`, `codeformatter`, etc)
+- Each custom plugin has the following structure:
+
+```
+lua/custom/
+  <namespace>/
+    <plugin_name>.nvim/
+      init.lua                          -- entrypoint (loads <namespace>-<plugin_name>/init.lua)
+      lua/
+        <namespace>-<plugin_name>/      -- plugin code
+          init.lua                      -- plugin modules
+      help/
+        <namespace>-<plugin_name>.md    -- plugin documentation
+      tests/
+        <test_files>.lua                -- plugin tests
+```
+
 ## In-Memoria Intelligence (Codebase Navigation)
 
 **When to use In-Memoria** (prefer over manual grep/glob):

@@ -1,3 +1,5 @@
+-- Show keybinding hints and clues
+---@type LazySpec
 return {
   "echasnovski/mini.clue",
   opts = {

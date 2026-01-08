@@ -1,3 +1,4 @@
+-- Move text around with Ctrl+Shift+Arrow keys
 ---@type LazySpec
 return {
   "echasnovski/mini.move",

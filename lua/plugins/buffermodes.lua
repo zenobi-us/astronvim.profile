@@ -1,3 +1,4 @@
+-- Automatic buffer mode switching (insert/normal)
 ---@type LazySpec
 return {
   "mouse-peasant/buffermodes.nvim",

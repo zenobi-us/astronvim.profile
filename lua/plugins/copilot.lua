@@ -1,3 +1,4 @@
+-- GitHub Copilot AI code suggestions
 ---@type LazySpec
 return {
   -- Configure Copilot to use a specific Node.js version from mise

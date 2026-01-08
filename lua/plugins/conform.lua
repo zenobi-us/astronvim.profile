@@ -1,3 +1,5 @@
+-- Code formatter for multiple languages
+---@type LazySpec
 return {
   "stevearc/conform.nvim",
   event = "User AstroFile",
