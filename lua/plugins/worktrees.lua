@@ -6,6 +6,7 @@ return {
   },
   config = function()
     require("worktrees").setup()
+    local Snacks = require "snacks"
 
     -- Set up keymaps
     local keymap = vim.keymap.set
@@ -14,7 +15,7 @@ return {
     keymap(
       "n",
       "<leader>gwc",
-      function() Snacks.picker.worktrees_new({ create = true }) end,
+      function() Snacks.picker.worktrees_new { create = true } end,
       { desc = "Create worktree from existing branch" }
     )
     keymap("n", "<leader>gwr", function() Snacks.picker.worktrees_remove() end, { desc = "Remove worktree" })
