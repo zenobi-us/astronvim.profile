@@ -1,6 +1,5 @@
 # AGENTS.md
 
-
 ## Project Guidelines
 
 - never commit binaries

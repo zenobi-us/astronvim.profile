@@ -46,7 +46,7 @@ return {
         modeline = true, -- enable modeline parsing
         modelines = 5, -- check first/last 5 lines for modelines
         whichwrap = "b,s,<,>,[,]", -- allow arrow keys to wrap across lines
-         guicursor = "n-v-c:block,i-ci-ve:ver75,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor", -- thicker insert cursor
+        guicursor = "n-v-c:block,i-ci-ve:ver75,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor", -- thicker insert cursor
       },
       g = { -- vim.g.<key>
         -- configure global vim variables (vim.g)
@@ -259,13 +259,13 @@ return {
         ["<Leader>f"] = { desc = "Find" },
         ["<Leader>g"] = { desc = "Git" },
         ["<Leader>gh"] = { desc = "GitHub" },
-         ["<Leader>ghc"] = { desc = "Commits" },
-         ["<Leader>ghi"] = { desc = "Issues" },
-         ["<Leader>ghl"] = { desc = "Litee" },
-         ["<Leader>ghp"] = { desc = "Pull Request" },
-         ["<Leader>ghr"] = { desc = "Review" },
-         ["<Leader>ght"] = { desc = "Threads" },
-         ["<Leader>ghh"] = { desc = "GitHub dashboard" },
+        ["<Leader>ghc"] = { desc = "Commits" },
+        ["<Leader>ghi"] = { desc = "Issues" },
+        ["<Leader>ghl"] = { desc = "Litee" },
+        ["<Leader>ghp"] = { desc = "Pull Request" },
+        ["<Leader>ghr"] = { desc = "Review" },
+        ["<Leader>ght"] = { desc = "Threads" },
+        ["<Leader>ghh"] = { desc = "GitHub dashboard" },
         ["<Leader>gw"] = { desc = "Worktree" },
         ["<Leader>h"] = { desc = "Help" },
         ["<Leader>l"] = { desc = "LSP" },
@@ -505,18 +505,16 @@ return {
       -- Open GitHub dashboard in floating terminal
       vim.keymap.set("n", "<Leader>ghh", function()
         local Terminal = require("toggleterm.terminal").Terminal
-        local gh_dash = Terminal:new({
+        local gh_dash = Terminal:new {
           cmd = "gh-dash",
           hidden = true,
           direction = "float",
           float_opts = {
             border = "rounded",
           },
-          on_open = function(_)
-            vim.cmd "startinsert!"
-          end,
+          on_open = function(_) vim.cmd "startinsert!" end,
           count = 100,
-        })
+        }
         gh_dash:toggle()
       end, { noremap = true, silent = true, desc = "Open GitHub dashboard" })
 
