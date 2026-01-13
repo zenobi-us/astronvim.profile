@@ -64,7 +64,7 @@ return {
       json = { "prettier" },
       jsonc = { "prettier" },
       yaml = { "prettier" },
-      markdown = { "prettier" },
+      markdown = { "cbfmt" },
       css = { "prettier" },
       scss = { "prettier" },
       sh = { "shfmt" },

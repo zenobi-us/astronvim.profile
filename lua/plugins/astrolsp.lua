@@ -221,8 +221,15 @@ return {
       -- client.server_capabilities.semanticTokensProvider = nil
 
       -- Integrate codesettings.nvim to apply project-local LSP settings
-      if require("lazy").plugins["codesettings.nvim"] then
-        require("codesettings").apply_to_client(client)
+      local lazy_ok, lazy = pcall(require, "lazy")
+      if lazy_ok then
+        local plugins = lazy.plugins()
+        if vim.tbl_contains(vim.tbl_keys(plugins), "codesettings.nvim") then
+          local codesettings_ok, codesettings = pcall(require, "codesettings")
+          if codesettings_ok then
+            codesettings.apply_to_client(client)
+          end
+        end
       end
     end,
   },
