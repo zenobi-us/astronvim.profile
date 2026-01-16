@@ -41,7 +41,7 @@ nvim
 - **Search & Navigation**: fzf-lua, Snacks.nvim picker — fuzzy finding and command/keymap discovery
 - **AI Coding**: CodeCompanion — AI pair programming with img-clip for image insertion, GitHub Copilot — AI code suggestions
 - **Testing**: neotest + neotest-vitest — run and debug tests inline
-- **Git**: octo.nvim, worktrees.nvim, diffview.nvim — GitHub interaction, git worktree management, and file history
+- **Git**: octo.nvim, worktrees.nvim, codediff.nvim — GitHub interaction, git worktree management, and VSCode-style diffs
 - **Code Quality**: conform, none-ls, mason — formatting, linting, and tool management
 - **Code Search**: grug-far — find and replace with preview
 - **UI/UX**: neotree, scrollbar, symbol-usage, treesitter — file tree, scroll position, symbols
@@ -96,11 +96,13 @@ Terminal
 | --------------------------------------- | ----------------------- |
 | Toggle terminal                         | `<Leader>tf`            |
 
-Git Worktrees
+Git & Diffs
 
 | Task                                    | Keymap                  |
 | --------------------------------------- | ----------------------- |
 | Switch git worktree                     | `<Leader>gws`           |
+| Open diff explorer                      | `<Leader>do`            |
+| Diff file with HEAD                     | `<Leader>df`            |
 
 Debugging
 
@@ -163,7 +165,10 @@ Debugging
 |                        | `<Leader>gwn`        | Create new worktree                        |
 |                        | `<Leader>gwc`        | Create from existing branch                |
 |                        | `<Leader>gwr`        | Remove worktree                            |
-| **Git History**        | `<Leader>gfh`        | View file git history with diffs           |
+| **Git Diffs**          | `<Leader>do`         | Open diff explorer                         |
+|                        | `<Leader>df`         | Diff file with HEAD                        |
+|                        | `<Leader>dh`         | Diff file with HEAD~1                      |
+|                        | `<Leader>dm`         | Diff file with branch (interactive)        |
 | **Terminal**           | `<C-~>`              | Toggle last used terminal                  |
 
 ### Insert Mode
