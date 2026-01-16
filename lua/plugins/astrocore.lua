@@ -284,6 +284,20 @@ return {
         ["<Leader>ll"] = { desc = "Refresh code lenses" },
         ["<Leader>lL"] = { desc = "Run code lens" },
 
+        -- Diff keybindings (codediff.nvim)
+        ["<Leader>do"] = { "<cmd>CodeDiff<cr>", desc = "Open diff explorer" },
+        ["<Leader>df"] = { "<cmd>CodeDiff file HEAD<cr>", desc = "Diff file with HEAD" },
+        ["<Leader>dh"] = { "<cmd>CodeDiff file HEAD~1<cr>", desc = "Diff file with HEAD~1" },
+        ["<Leader>dm"] = {
+          function()
+            -- Get default branch and compare with it
+            vim.ui.input({ prompt = "Compare with branch: ", default = "main" }, function(branch)
+              if branch then vim.cmd("CodeDiff file " .. branch) end
+            end)
+          end,
+          desc = "Diff file with branch",
+        },
+
         -- GitHub keybindings with descriptions
         ["<Leader>ghcc"] = { desc = "Close commit" },
         ["<Leader>ghce"] = { desc = "Expand commit" },
