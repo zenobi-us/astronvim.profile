@@ -291,7 +291,7 @@ return {
         },
 
         -- Git keybindings
-        ["<Leader>gp"] = {
+        ["<Leader>gP"] = {
           function() require("snacks").picker.git_diff { group = true, staged = true, base = "FETCH_HEAD" } end,
           desc = "Git diff staged vs FETCH_HEAD",
         },
