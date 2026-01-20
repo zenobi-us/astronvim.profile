@@ -292,8 +292,22 @@ return {
 
         -- Git keybindings
         ["<Leader>gP"] = {
-          function() require("snacks").picker.git_diff { group = true, staged = true, base = "FETCH_HEAD" } end,
-          desc = "Git diff staged vs FETCH_HEAD",
+          function()
+            -- Try to get upstream branch first
+            local base = vim.fn.system("git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2>/dev/null"):gsub("%s+", "")
+            if base == "" or vim.v.shell_error ~= 0 then
+              -- Fall back to using gh CLI to get default branch
+              local default_branch = vim.fn.system("gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name' 2>/dev/null"):gsub("%s+", "")
+              if default_branch ~= "" and vim.v.shell_error == 0 then
+                base = "origin/" .. default_branch
+              else
+                -- Final fallback to origin/main
+                base = "origin/main"
+              end
+            end
+            require("snacks").picker.git_diff { group = true, staged = true, base = base }
+          end,
+          desc = "Git diff staged vs upstream",
         },
 
         -- Worktree keybindings with descriptions
