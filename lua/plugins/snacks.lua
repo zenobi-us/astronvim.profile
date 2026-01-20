@@ -20,6 +20,24 @@ return {
           { section = "startup" },
         },
       },
+      picker = {
+        sources = {
+          git_diff = {
+            win = {
+              input = {
+                keys = {
+                  ["o"] = { "confirm", mode = { "n", "i" } },
+                },
+              },
+              list = {
+                keys = {
+                  ["o"] = "confirm",
+                },
+              },
+            },
+          },
+        },
+      },
     },
   },
 
