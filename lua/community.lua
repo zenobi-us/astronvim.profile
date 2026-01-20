@@ -7,6 +7,9 @@ return {
   "AstroNvim/astrocommunity",
   { import = "astrocommunity.test.neotest" },
   { import = "astrocommunity.motion.mini-move" },
+  { import = "astrocommunity.recipes.vscode-icons" },
+  { import = "astrocommunity.recipes.picker-nvchad-theme" },
+
   -- { import = "astrocommunity.completion.copilot-lua-cmp" },
   -- { import = "astrocommunity.editing-support.codecompanion-nvim" },
   { import = "astrocommunity.search.grug-far-nvim" },
@@ -17,5 +20,7 @@ return {
   { import = "astrocommunity.pack.typescript" },
   { import = "astrocommunity.colorscheme.nightfox-nvim" },
   { import = "astrocommunity.keybinding.mini-clue" },
+  { import = "astrocommunity.recipes.astrolsp-no-insert-inlay-hints" },
+
   -- import/override with your plugins folder
 }
