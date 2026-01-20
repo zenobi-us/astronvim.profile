@@ -257,14 +257,6 @@ return {
         ["<Leader>d"] = { desc = "Debug/Diff" },
         ["<Leader>f"] = { desc = "Find" },
         ["<Leader>g"] = { desc = "Git" },
-        ["<Leader>gh"] = { desc = "GitHub" },
-        ["<Leader>ghc"] = { desc = "Commits" },
-        ["<Leader>ghi"] = { desc = "Issues" },
-        ["<Leader>ghl"] = { desc = "Litee" },
-        ["<Leader>ghp"] = { desc = "Pull Request" },
-        ["<Leader>ghr"] = { desc = "Review" },
-        ["<Leader>ght"] = { desc = "Threads" },
-        ["<Leader>ghh"] = { desc = "GitHub dashboard" },
         ["<Leader>gw"] = { desc = "Worktree" },
         ["<Leader>h"] = { desc = "Help" },
         ["<Leader>l"] = { desc = "LSP" },
@@ -297,32 +289,6 @@ return {
           end,
           desc = "Diff file with branch",
         },
-
-        -- GitHub keybindings with descriptions
-        ["<Leader>ghcc"] = { desc = "Close commit" },
-        ["<Leader>ghce"] = { desc = "Expand commit" },
-        ["<Leader>ghco"] = { desc = "Open to commit" },
-        ["<Leader>ghcp"] = { desc = "Pop out commit" },
-        ["<Leader>ghcz"] = { desc = "Collapse commit" },
-        ["<Leader>ghip"] = { desc = "Preview issue" },
-        ["<Leader>ghlt"] = { desc = "Toggle litee panel" },
-        ["<Leader>ghpc"] = { desc = "Close PR" },
-        ["<Leader>ghpd"] = { desc = "PR details" },
-        ["<Leader>ghpe"] = { desc = "Expand PR" },
-        ["<Leader>ghpo"] = { desc = "Open PR" },
-        ["<Leader>ghpp"] = { desc = "Pop out PR" },
-        ["<Leader>ghpr"] = { desc = "Refresh PR" },
-        ["<Leader>ghpt"] = { desc = "Open to PR" },
-        ["<Leader>ghpz"] = { desc = "Collapse PR" },
-        ["<Leader>ghrb"] = { desc = "Begin review" },
-        ["<Leader>ghrc"] = { desc = "Close review" },
-        ["<Leader>ghrd"] = { desc = "Delete review" },
-        ["<Leader>ghre"] = { desc = "Expand review" },
-        ["<Leader>ghrs"] = { desc = "Submit review" },
-        ["<Leader>ghrz"] = { desc = "Collapse review" },
-        ["<Leader>ghtc"] = { desc = "Create thread" },
-        ["<Leader>ghtn"] = { desc = "Next thread" },
-        ["<Leader>ghtt"] = { desc = "Toggle thread" },
 
         -- Worktree keybindings with descriptions
         ["<Leader>gws"] = { desc = "Switch worktree" },
@@ -514,22 +480,6 @@ return {
         function() require("toggleterm").toggle() end,
         { noremap = true, silent = true, desc = "Toggle last used toggleterm" }
       )
-
-      -- Open GitHub dashboard in floating terminal
-      vim.keymap.set("n", "<Leader>ghh", function()
-        local Terminal = require("toggleterm.terminal").Terminal
-        local gh_dash = Terminal:new {
-          cmd = "gh-dash",
-          hidden = true,
-          direction = "float",
-          float_opts = {
-            border = "rounded",
-          },
-          on_open = function(_) vim.cmd "startinsert!" end,
-          count = 100,
-        }
-        gh_dash:toggle()
-      end, { noremap = true, silent = true, desc = "Open GitHub dashboard" })
 
       -- Load launch.json when nvim-dap-view opens
       vim.api.nvim_create_autocmd("FileType", {
