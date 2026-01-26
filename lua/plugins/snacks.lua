@@ -6,6 +6,11 @@ return {
     priority = 1000,
     lazy = false,
     opts = {
+      picker = {
+        layout = {
+          preset = "telescope", -- list on left, preview on right
+        },
+      },
       dashboard = {
         sections = {
           {

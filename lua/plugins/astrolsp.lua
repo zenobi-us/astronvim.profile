@@ -186,7 +186,7 @@ return {
           cond = "textDocument/rename",
         },
         ["<Leader>lR"] = {
-          function() vim.lsp.buf.references() end,
+          function() require("snacks").picker.lsp_references() end,
           desc = "Find all references",
           cond = "textDocument/references",
         },
