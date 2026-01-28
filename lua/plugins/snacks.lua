@@ -6,6 +6,8 @@ return {
     priority = 1000,
     lazy = false,
     opts = {
+      input = { enabled = true },
+      select = { enabled = true },
       picker = {
         layout = {
           preset = "telescope", -- list on left, preview on right

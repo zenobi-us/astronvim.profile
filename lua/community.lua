@@ -10,8 +10,6 @@ return {
   { import = "astrocommunity.recipes.vscode-icons" },
   { import = "astrocommunity.recipes.picker-nvchad-theme" },
 
-  -- { import = "astrocommunity.completion.copilot-lua-cmp" },
-  -- { import = "astrocommunity.editing-support.codecompanion-nvim" },
   { import = "astrocommunity.search.grug-far-nvim" },
   { import = "astrocommunity.utility.lua-json5" },
   { import = "astrocommunity.pack.lua" },
