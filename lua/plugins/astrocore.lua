@@ -179,8 +179,60 @@ return {
         ["<C-BS>"] = { "db", desc = "Delete word backward" },
         ["\x1b[127;5u"] = { "db", desc = "Delete word backward (Alacritty)" },
 
-        -- Ctrl+Click to goto definition
-        ["<C-LeftMouse>"] = { function() vim.lsp.buf.definition() end, desc = "Goto definition" },
+        -- Mouse-based LSP navigation
+        -- Double-click for goto definition (works in ALL terminals)
+        ["<2-LeftMouse>"] = {
+          function()
+            vim.lsp.buf.definition()
+          end,
+          desc = "Goto definition (double-click)",
+        },
+
+        -- Right-click for LSP context menu (discoverable)
+        ["<RightMouse>"] = {
+          function()
+            local clients = vim.lsp.get_clients({ bufnr = 0 })
+            if #clients == 0 then
+              vim.notify("No LSP client attached", vim.log.levels.WARN)
+              return
+            end
+
+            vim.ui.select({
+              "Go to Definition",
+              "Go to Declaration",
+              "Go to Type Definition",
+              "Show References",
+              "Rename Symbol",
+              "Show Hover Info",
+            }, {
+              prompt = "LSP Action:",
+            }, function(choice)
+              if choice == "Go to Definition" then
+                vim.lsp.buf.definition()
+              elseif choice == "Go to Declaration" then
+                vim.lsp.buf.declaration()
+              elseif choice == "Go to Type Definition" then
+                vim.lsp.buf.type_definition()
+              elseif choice == "Show References" then
+                vim.lsp.buf.references()
+              elseif choice == "Rename Symbol" then
+                vim.lsp.buf.rename()
+              elseif choice == "Show Hover Info" then
+                vim.lsp.buf.hover()
+              end
+            end)
+          end,
+          desc = "LSP actions menu (right-click)",
+        },
+
+        -- Ctrl+Click fallback (works if terminal supports it)
+        ["<C-LeftMouse>"] = {
+          function()
+            vim.notify("Ctrl+Click works in your terminal!", vim.log.levels.INFO, { title = "LSP" })
+            vim.lsp.buf.definition()
+          end,
+          desc = "Goto definition (Ctrl+Click - if supported)",
+        },
 
         -- Grug search on Ctrl+F
         ["<C-f>"] = {
