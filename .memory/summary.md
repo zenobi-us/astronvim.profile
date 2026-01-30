@@ -1,5 +1,14 @@
 # Neovim Configuration Summary
 
+## Documentation
+
+### State Machine Diagrams
+Complete ASCII state machine diagrams for all plugins are documented in `.memory/knowledge-codemap.md`. These diagrams show:
+- User interaction entry points (keymaps, events, commands)
+- State transitions and flow through plugin features
+- Actions taken at each stage
+- Exit conditions and return to idle states
+
 ## Configuration Location
 All key mappings are in `lua/plugins/astrocore.lua` under the `mappings` section.
 
