@@ -181,48 +181,59 @@ return {
 
         -- Mouse-based LSP navigation
         -- Double-click for goto definition (works in ALL terminals)
+        -- Smart: uses gf for markdown links, LSP definition otherwise
         ["<2-LeftMouse>"] = {
           function()
+            local ft = vim.bo.filetype
+
+            -- For markdown, check if we're on a link and use gf
+            if ft == "markdown" then
+              local line = vim.api.nvim_get_current_line()
+              local col = vim.fn.col "."
+
+              -- Check if cursor is inside a markdown link: [text](path) or just (path)
+              -- Find all link patterns in the line
+              local link_path = nil
+
+              -- Pattern for markdown links: [text](path)
+              for text, path in line:gmatch "%[([^%]]*)]%(([^%)]+)%)" do
+                local start_pos, end_pos = line:find("%[" .. vim.pesc(text) .. "%]%(" .. vim.pesc(path) .. "%)", 1, false)
+                if start_pos and col >= start_pos and col <= end_pos then
+                  link_path = path
+                  break
+                end
+              end
+
+              -- If we found a link path, navigate to it
+              if link_path then
+                -- Remove any anchor (#section) from the path
+                link_path = link_path:gsub("#.*$", "")
+                -- Strip leading ./ from relative paths
+                link_path = link_path:gsub("^%./", "")
+
+                if link_path ~= "" then
+                  -- Get the directory of the current file and resolve path
+                  local current_dir = vim.fn.expand "%:p:h"
+                  local full_path = vim.fn.fnamemodify(current_dir .. "/" .. link_path, ":p")
+
+                  if vim.fn.filereadable(full_path) == 1 then
+                    vim.cmd("edit " .. vim.fn.fnameescape(full_path))
+                  else
+                    vim.notify("File not found: " .. full_path, vim.log.levels.WARN)
+                  end
+                  return
+                end
+              end
+
+              -- If not on a markdown link, try gf (go to file under cursor)
+              local ok = pcall(vim.cmd, "normal! gf")
+              if ok then return end
+            end
+
+            -- Default: use LSP go to definition
             vim.lsp.buf.definition()
           end,
           desc = "Goto definition (double-click)",
-        },
-
-        -- Right-click for LSP context menu (discoverable)
-        ["<RightMouse>"] = {
-          function()
-            local clients = vim.lsp.get_clients({ bufnr = 0 })
-            if #clients == 0 then
-              vim.notify("No LSP client attached", vim.log.levels.WARN)
-              return
-            end
-
-            vim.ui.select({
-              "Go to Definition",
-              "Go to Declaration",
-              "Go to Type Definition",
-              "Show References",
-              "Rename Symbol",
-              "Show Hover Info",
-            }, {
-              prompt = "LSP Action:",
-            }, function(choice)
-              if choice == "Go to Definition" then
-                vim.lsp.buf.definition()
-              elseif choice == "Go to Declaration" then
-                vim.lsp.buf.declaration()
-              elseif choice == "Go to Type Definition" then
-                vim.lsp.buf.type_definition()
-              elseif choice == "Show References" then
-                vim.lsp.buf.references()
-              elseif choice == "Rename Symbol" then
-                vim.lsp.buf.rename()
-              elseif choice == "Show Hover Info" then
-                vim.lsp.buf.hover()
-              end
-            end)
-          end,
-          desc = "LSP actions menu (right-click)",
         },
 
         -- Ctrl+Click fallback (works if terminal supports it)
@@ -256,6 +267,12 @@ return {
             }
           end,
           desc = "Toggle grug search and replace",
+        },
+
+        -- Find icons/emojis using Snacks picker
+        ["<Leader>fe"] = {
+          function() require("snacks").picker.icons() end,
+          desc = "Find icons",
         },
 
         -- Clone current line (Ctrl+Shift+D)
@@ -346,10 +363,13 @@ return {
         ["<Leader>gP"] = {
           function()
             -- Try to get upstream branch first
-            local base = vim.fn.system("git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2>/dev/null"):gsub("%s+", "")
+            local base =
+              vim.fn.system("git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2>/dev/null"):gsub("%s+", "")
             if base == "" or vim.v.shell_error ~= 0 then
               -- Fall back to using gh CLI to get default branch
-              local default_branch = vim.fn.system("gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name' 2>/dev/null"):gsub("%s+", "")
+              local default_branch = vim.fn
+                .system("gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name' 2>/dev/null")
+                :gsub("%s+", "")
               if default_branch ~= "" and vim.v.shell_error == 0 then
                 base = "origin/" .. default_branch
               else
@@ -559,6 +579,54 @@ return {
         callback = function()
           local ok, dap_ext = pcall(require, "dap.ext.vscode")
           if ok then dap_ext.load_launchjs() end
+        end,
+      })
+
+      -- Markdown: gd follows links to local files
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "markdown",
+        callback = function(args)
+          vim.keymap.set("n", "gd", function()
+            local line = vim.api.nvim_get_current_line()
+            local col = vim.fn.col "."
+
+            -- Check if cursor is inside a markdown link: [text](path)
+            local link_path = nil
+            for text, path in line:gmatch "%[([^%]]*)]%(([^%)]+)%)" do
+              local pattern = "%[" .. vim.pesc(text) .. "%]%(" .. vim.pesc(path) .. "%)"
+              local start_pos, end_pos = line:find(pattern)
+              if start_pos and col >= start_pos and col <= end_pos then
+                link_path = path
+                break
+              end
+            end
+
+            if link_path then
+              -- Remove any anchor (#section) from the path
+              link_path = link_path:gsub("#.*$", "")
+              -- Strip leading ./ from relative paths
+              link_path = link_path:gsub("^%./", "")
+
+              if link_path ~= "" then
+                -- Get the directory of the current file and resolve path
+                local current_dir = vim.fn.expand "%:p:h"
+                local full_path = vim.fn.fnamemodify(current_dir .. "/" .. link_path, ":p")
+
+                if vim.fn.filereadable(full_path) == 1 then
+                  vim.cmd("edit " .. vim.fn.fnameescape(full_path))
+                else
+                  vim.notify("File not found: " .. full_path, vim.log.levels.WARN)
+                end
+                return
+              end
+            end
+
+            -- Fallback: try gf (go to file under cursor)
+            local ok_gf = pcall(vim.cmd, "normal! gf")
+            if not ok_gf then
+              vim.notify("No link or file under cursor", vim.log.levels.INFO)
+            end
+          end, { buffer = args.buf, desc = "Follow markdown link" })
         end,
       })
 
