@@ -9,5 +9,11 @@ return {
       statusline = false,
     },
     sources = { "filesystem", "document_symbols" },
+    default_component_configs = {
+      -- Hide date/time and size columns
+      created = { enabled = false },
+      last_modified = { enabled = false },
+      file_size = { enabled = false },
+    },
   },
 }
