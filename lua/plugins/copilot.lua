@@ -1,29 +1,38 @@
--- GitHub Copilot AI code suggestions
+-- Plugin: copilot.lua
+-- Description: GitHub Copilot AI code suggestions
+-- URL: https://github.com/zbirenbaum/copilot.lua
 ---@type LazySpec
 return {
-  -- Configure Copilot to use a specific Node.js version from mise
   {
     "zbirenbaum/copilot.lua",
-    opts = {
-      copilot_node_command = vim.fn.system("mise which --tool node@latest node"):gsub("\n", ""),
-      suggestion = {
-        enabled = true,
-        auto_trigger = true,
-        keymap = {
-          accept = "<C-Right>",
-          accept_word = false,
-          accept_line = false,
-          next = "<C-Down>",
-          prev = "<C-Up>",
-          dismiss = "<C-Backspace>",
+    opts = function()
+      -- Resolve node path at runtime when plugin loads (not at parse time)
+      local result = vim.system({ "mise", "which", "--tool=node@latest", "node" }, { text = true }):wait()
+      local node_path = (result.stdout or ""):gsub("%s+", "")
+      if node_path == "" or result.code ~= 0 then
+        node_path = vim.fn.exepath("node") -- fallback
+      end
+      return {
+        copilot_node_command = node_path,
+        suggestion = {
+          enabled = true,
+          auto_trigger = true,
+          keymap = {
+            accept = "<C-Right>",
+            accept_word = false,
+            accept_line = false,
+            next = "<C-Down>",
+            prev = "<C-Up>",
+            dismiss = false,
+          },
         },
-      },
-      filetypes = {
-        yaml = true,
-        yml = true,
-        markdown = true,
-      },
-    },
+        filetypes = {
+          yaml = true,
+          yml = true,
+          markdown = true,
+        },
+      }
+    end,
   },
 
   -- Integrate Copilot with nvim-cmp
