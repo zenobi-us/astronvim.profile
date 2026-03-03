@@ -14,6 +14,7 @@ return {
         "json-lsp",
         "tailwindcss-language-server",
         "vtsls",
+        "graphql-language-service-cli",
 
         -- install debuggers
         "debugpy",

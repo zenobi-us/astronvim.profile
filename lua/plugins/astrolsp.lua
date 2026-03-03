@@ -91,6 +91,11 @@ return {
           },
         },
       },
+      graphql = {
+        -- GraphQL LSP for Apollo/GraphQL support
+        -- Requires a graphql.config.ts/js/yaml in project root
+        filetypes = { "graphql", "gql", "typescriptreact", "javascriptreact", "typescript", "javascript" },
+      },
     },
     -- customize how language servers are attached
     handlers = {
