@@ -331,6 +331,16 @@ return {
         ["<Leader>l"] = { desc = "LSP" },
         ["<Leader>s"] = { desc = "Search/Snippet/Split" },
         ["<Leader>t"] = { desc = "Terminal/Test" },
+        ["<Leader>tp"] = {
+          function()
+            if vim.fn.executable "pi" == 1 then
+              vim.cmd "TermExec cmd='pi' direction=float"
+            else
+              vim.notify("'pi' executable not found in PATH", vim.log.levels.ERROR)
+            end
+          end,
+          desc = "Open pi-mono session",
+        },
         ["<Leader>u"] = { desc = "UI" },
         ["<Leader>v"] = { desc = "Vertical split" },
         ["<Leader>w"] = { desc = "Window/Workspace" },
