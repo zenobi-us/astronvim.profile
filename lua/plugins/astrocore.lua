@@ -245,28 +245,40 @@ return {
           desc = "Goto definition (Ctrl+Click - if supported)",
         },
 
-        -- Grug search on Ctrl+F
+        -- Grug find in current file on Ctrl+F
         ["<C-f>"] = {
           function()
             local search_term = vim.fn.expand "<cword>"
-            require("grug-far").toggle_instance {
-              instanceName = "main",
-              prefills = { search = search_term },
+            require("grug-far").open {
+              prefills = {
+                search = search_term,
+                paths = vim.fn.expand "%",
+              },
             }
           end,
-          desc = "Toggle grug search",
+          desc = "Grug find in current file",
         },
 
-        -- Grug search and replace on Ctrl+Shift+F
+        -- Grug find in project on Ctrl+Shift+F
         ["<C-S-f>"] = {
           function()
             local search_term = vim.fn.expand "<cword>"
-            require("grug-far").toggle_instance {
-              instanceName = "main",
+            require("grug-far").open {
               prefills = { search = search_term },
             }
           end,
-          desc = "Toggle grug search and replace",
+          desc = "Grug find in project",
+        },
+
+        -- Grug find/replace in project on Ctrl+Shift+H
+        ["<C-S-h>"] = {
+          function()
+            local search_term = vim.fn.expand "<cword>"
+            require("grug-far").open {
+              prefills = { search = search_term },
+            }
+          end,
+          desc = "Grug find/replace in project",
         },
 
         -- Find icons/emojis using Snacks picker
@@ -362,24 +374,38 @@ return {
         -- Git keybindings
         ["<Leader>gP"] = {
           function()
-            -- Try to get upstream branch first
-            local base =
-              vim.fn.system("git rev-parse --abbrev-ref --symbolic-full-name @{upstream} 2>/dev/null"):gsub("%s+", "")
-            if base == "" or vim.v.shell_error ~= 0 then
-              -- Fall back to using gh CLI to get default branch
+            local target = nil
+
+            -- If this branch has a PR, diff against the PR base branch.
+            local pr_base = vim.fn.system("gh pr view --json baseRefName --jq '.baseRefName' 2>/dev/null"):gsub("%s+", "")
+            if pr_base ~= "" and vim.v.shell_error == 0 then
+              target = pr_base
+            end
+
+            -- Otherwise fall back to the repo default branch.
+            if not target then
               local default_branch = vim.fn
                 .system("gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name' 2>/dev/null")
                 :gsub("%s+", "")
-              if default_branch ~= "" and vim.v.shell_error == 0 then
-                base = "origin/" .. default_branch
-              else
-                -- Final fallback to origin/main
-                base = "origin/main"
-              end
+              if default_branch ~= "" and vim.v.shell_error == 0 then target = default_branch end
             end
-            require("snacks").picker.git_diff { group = true, staged = true, base = base }
+
+            -- Final fallback.
+            target = target or "main"
+
+            -- Prefer origin/<branch> when it exists, otherwise use branch name directly.
+            local remote_ref = "origin/" .. target
+            local has_remote_ref = vim.fn.system("git show-ref --verify --quiet refs/remotes/" .. remote_ref .. " 2>/dev/null")
+            local base = (vim.v.shell_error == 0 and has_remote_ref ~= nil) and remote_ref or target
+
+            require("snacks").picker.git_diff { group = true, base = base }
           end,
-          desc = "Git diff staged vs upstream",
+          desc = "Git diff vs PR target/default branch",
+        },
+
+        ["<Leader>gf"] = {
+          function() require("snacks").picker.git_log_file() end,
+          desc = "Git history for current file",
         },
 
         -- Worktree keybindings with descriptions
@@ -491,27 +517,39 @@ return {
         },
       },
       v = {
-        -- Grug search in visual mode
+        -- Grug find in current file in visual mode
         ["<C-f>"] = {
           function()
             vim.cmd 'noau normal! "zy'
             local search_term = vim.fn.getreg "z"
-            require("grug-far").toggle_instance {
-              instanceName = "main",
-              prefills = { search = search_term },
+            require("grug-far").open {
+              prefills = {
+                search = search_term,
+                paths = vim.fn.expand "%",
+              },
             }
           end,
-          desc = "Toggle grug search with selection",
+          desc = "Grug find in current file with selection",
         },
 
-        -- Grug search and replace in visual mode
+        -- Grug find in project in visual mode
         ["<C-S-f>"] = {
           function()
             vim.cmd 'noau normal! "zy'
             local search_term = vim.fn.getreg "z"
             require("grug-far").open { prefills = { search = search_term } }
           end,
-          desc = "Open grug search and replace with selection",
+          desc = "Grug find in project with selection",
+        },
+
+        -- Grug find/replace in project in visual mode
+        ["<C-S-h>"] = {
+          function()
+            vim.cmd 'noau normal! "zy'
+            local search_term = vim.fn.getreg "z"
+            require("grug-far").open { prefills = { search = search_term } }
+          end,
+          desc = "Grug find/replace in project with selection",
         },
 
         -- Clone selected lines (Ctrl+Shift+D)
@@ -524,6 +562,18 @@ return {
         ["<C-S-k>"] = {
           function() vim.cmd "'<,'>delete" end,
           desc = "Delete selected lines",
+        },
+
+        -- Sort selected lines ascending
+        ["<Leader>sa"] = {
+          function() vim.cmd "'<,'>sort" end,
+          desc = "Sort selected lines ascending",
+        },
+
+        -- Sort selected lines descending
+        ["<Leader>sd"] = {
+          function() vim.cmd "'<,'>sort!" end,
+          desc = "Sort selected lines descending",
         },
 
         -- Copy to clipboard (Ctrl+C)
