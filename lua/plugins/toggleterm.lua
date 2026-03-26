@@ -6,21 +6,23 @@ return {
   "akinsho/toggleterm.nvim",
   event = "VeryLazy",
   config = function()
-    require("toggleterm").setup({
+    require("toggleterm").setup {
       size = 20,
       open_mapping = [[<c-\>]],
       shade_terminals = true,
+      start_in_insert = true,
+      persist_mode = false,
       shading_factor = 2,
       direction = "float",
       float_opts = {
         border = "curved",
         winblend = 0,
       },
-    })
+    }
 
     -- Lazygit floating terminal
     local Terminal = require("toggleterm.terminal").Terminal
-    local lazygit = Terminal:new({
+    local lazygit = Terminal:new {
       cmd = "lazygit",
       dir = "git_dir",
       direction = "float",
@@ -28,16 +30,12 @@ return {
         border = "curved",
       },
       on_open = function(term)
-        vim.cmd("startinsert!")
+        vim.cmd "startinsert!"
         vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
       end,
       close_on_exit = true,
-    })
+    }
 
-    function _G.lazygit_toggle()
-      lazygit:toggle()
-    end
-
-    vim.keymap.set("n", "<leader>gg", lazygit_toggle, { desc = "Toggle Lazygit" })
+    vim.keymap.set("n", "<leader>gg", function() lazygit:toggle() end, { desc = "Toggle Lazygit" })
   end,
 }
