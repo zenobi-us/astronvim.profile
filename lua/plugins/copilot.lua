@@ -10,7 +10,7 @@ return {
       local result = vim.system({ "mise", "which", "--tool=node@latest", "node" }, { text = true }):wait()
       local node_path = (result.stdout or ""):gsub("%s+", "")
       if node_path == "" or result.code ~= 0 then
-        node_path = vim.fn.exepath("node") -- fallback
+        node_path = vim.fn.exepath "node" -- fallback
       end
       return {
         copilot_node_command = node_path,
@@ -18,7 +18,7 @@ return {
           enabled = true,
           auto_trigger = true,
           keymap = {
-            accept = "<C-Right>",
+            accept = "<A-Right>",
             accept_word = false,
             accept_line = false,
             next = "<C-Down>",
