@@ -466,6 +466,12 @@ return {
         ["<C-S-Up>"] = { "<C-o>vk", desc = "Select line up" },
         ["<C-S-Down>"] = { "<C-o>vj", desc = "Select line down" },
 
+        -- Trigger completion dropdown
+        ["<C-Space>"] = {
+          function() require("cmp").complete() end,
+          desc = "Trigger completion",
+        },
+
         -- Copilot keymaps
         ["<Tab>"] = {
           function()
