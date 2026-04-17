@@ -5,29 +5,60 @@ return {
     "folke/snacks.nvim",
     priority = 1000,
     lazy = false,
-    opts = {
-      input = { enabled = true },
-      select = { enabled = true },
-      picker = {
-        layout = {
-          preset = "telescope", -- list on left, preview on right
-        },
-      },
-      dashboard = {
+    opts = function(_, opts)
+      local dotfile_root = vim.env.DOTFILE_ROOT
+      local pokemon_section
+
+      if dotfile_root and dotfile_root ~= "" then
+        local pokemon_cmd = string.format("%s/modules/pokemon__config.zsh", dotfile_root)
+        pokemon_section = {
+          section = "terminal",
+          cmd = pokemon_cmd,
+          random = 10,
+          pane = 1,
+          indent = 19,
+          height = 20,
+        }
+      else
+        pokemon_section = {
+          header = [[
+           ⢀⡴⠑⡄
+          ⠸⡇⠀⠿⡀
+          ⠀⠀⠀⠀⠙⢦⡀
+          ⠀⠀⠀⠀⠀⠀⠈⠳⣄
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠈⠳⡄
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⡄
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠓⠦⣀
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠑⢄
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⡆
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡇
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢠⠃
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠎
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡰⠃
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠞
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡔⠁
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⡼
+          ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠁
+          ]],
+          pane = 1,
+          indent = 19,
+          padding = 1,
+        }
+      end
+      opts = opts or {}
+      opts.input = { enabled = true }
+      opts.select = { enabled = true }
+      opts.dashboard = {
         sections = {
-          {
-            section = "terminal",
-            cmd = "mise x -- pokemon-go-colorscripts --name glalie --no-title",
-            random = 10,
-            pane = 1,
-            indent = 19,
-            height = 20,
-          },
+          pokemon_section,
           { section = "keys", gap = 1, padding = 1 },
           { section = "startup" },
         },
-      },
-      picker = {
+      }
+      opts.picker = {
+        layout = {
+          preset = "telescope", -- list on left, preview on right
+        },
         sources = {
           git_diff = {
             win = {
@@ -44,8 +75,10 @@ return {
             },
           },
         },
-      },
-    },
+      }
+
+      return opts
+    end,
   },
 
   -- Disable built-in alpha dashboard
