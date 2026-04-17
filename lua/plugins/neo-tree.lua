@@ -11,7 +11,7 @@ return {
     sources = { "filesystem", "document_symbols" },
     filesystem = {
       filtered_items = {
-        visible = true,
+        visible = false,
         hide_dotfiles = false,
         hide_gitignored = false,
       },
@@ -23,4 +23,8 @@ return {
       file_size = { enabled = false },
     },
   },
+  config = function(_, opts)
+    require("neo-tree").setup(opts)
+    vim.api.nvim_set_hl(0, "NeoTreeGitIgnored", { link = "Comment" })
+  end,
 }
