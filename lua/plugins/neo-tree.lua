@@ -4,6 +4,8 @@ return {
   "nvim-neo-tree/neo-tree.nvim",
   branch = "v3.x",
   opts = {
+    close_if_last_window = false,
+    open_files_in_last_window = false,
     source_selector = {
       winbar = false,
       statusline = false,
