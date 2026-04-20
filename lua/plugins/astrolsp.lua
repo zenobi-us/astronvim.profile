@@ -139,12 +139,12 @@ return {
           cond = "textDocument/declaration",
         },
         gd = {
-          function() vim.lsp.buf.definition() end,
+          function() require("snacks").picker.lsp_definitions() end,
           desc = "Definition of current symbol",
           cond = "textDocument/definition",
         },
         gy = {
-          function() vim.lsp.buf.type_definition() end,
+          function() require("snacks").picker.lsp_type_definitions() end,
           desc = "Type definition of current symbol",
           cond = "textDocument/typeDefinition",
         },

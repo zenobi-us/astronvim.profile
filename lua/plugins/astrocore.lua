@@ -230,8 +230,8 @@ return {
               if ok then return end
             end
 
-            -- Default: use LSP go to definition
-            vim.lsp.buf.definition()
+            -- Default: use Snacks picker for go to definition
+            require("snacks").picker.lsp_definitions()
           end,
           desc = "Goto definition (double-click)",
         },
@@ -240,7 +240,7 @@ return {
         ["<C-LeftMouse>"] = {
           function()
             vim.notify("Ctrl+Click works in your terminal!", vim.log.levels.INFO, { title = "LSP" })
-            vim.lsp.buf.definition()
+            require("snacks").picker.lsp_definitions()
           end,
           desc = "Goto definition (Ctrl+Click - if supported)",
         },
