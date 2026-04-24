@@ -1,6 +1,8 @@
 ---@type LazySpec
 return {
   "mrjones2014/codesettings.nvim",
+  -- Recommended by plugin docs: keep this eagerly available for LSP hooks.
+  lazy = false,
   dependencies = { "nvimtools/none-ls.nvim" },
   opts = {
     -- Look for these config files in your project root
@@ -16,6 +18,5 @@ return {
     -- How to merge lists: 'append' (default), 'prepend', or 'replace'
     merge_lists = "append",
   },
-  -- Load on these filetypes so integrations work properly
-  ft = { "json", "jsonc", "lua" },
+  -- Keep this plugin globally available; it lazy-loads internals itself.
 }

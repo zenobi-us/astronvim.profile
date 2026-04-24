@@ -100,9 +100,18 @@ return {
     },
     -- customize how language servers are attached
     handlers = {
-      -- a function without a key is simply the default handler, functions take two parameters, the server name and the configured options table for that server
-      -- function(server, opts) require("lspconfig")[server].setup(opts) end
+      function(server, opts)
+        local ok, codesettings = pcall(require, "codesettings")
+        if ok then
+          local existing_before_init = opts.before_init
+          opts.before_init = function(params, config)
+            codesettings.with_local_settings(config.name or server, config)
+            if existing_before_init then existing_before_init(params, config) end
+          end
+        end
 
+        require("lspconfig")[server].setup(opts)
+      end,
       -- the key is the server that is being setup with `lspconfig`
       -- rust_analyzer = false, -- setting a handler to false will disable the set up of that language server
       -- pyright = function(_, opts) require("lspconfig").pyright.setup(opts) end -- or a custom handler function can be passed
@@ -222,21 +231,12 @@ return {
     },
     -- A custom `on_attach` function to be run after the default `on_attach` function
     -- takes two parameters `client` and `bufnr`  (`:h lspconfig-setup`)
-    on_attach = function(client, bufnr)
+    on_attach = function(_client, _bufnr)
       -- this would disable semanticTokensProvider for all clients
       -- client.server_capabilities.semanticTokensProvider = nil
 
-      -- Integrate codesettings.nvim to apply project-local LSP settings
-      local lazy_ok, lazy = pcall(require, "lazy")
-      if lazy_ok then
-        local plugins = lazy.plugins()
-        if vim.tbl_contains(vim.tbl_keys(plugins), "codesettings.nvim") then
-          local codesettings_ok, codesettings = pcall(require, "codesettings")
-          if codesettings_ok then
-            codesettings.apply_to_client(client)
-          end
-        end
-      end
+      -- Keep on_attach focused on buffer-local behavior; local LSP settings are
+      -- merged in `before_init` by the default LSP handler above.
     end,
   },
 }
