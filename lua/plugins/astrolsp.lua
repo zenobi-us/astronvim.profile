@@ -210,7 +210,7 @@ return {
           desc = "Search workspace symbols",
           cond = "workspace/symbol",
         },
-        ["<Leader>ll"] = {
+        ["<Leader>lC"] = {
           function() vim.lsp.codelens.refresh() end,
           desc = "Refresh code lenses",
           cond = "textDocument/codeLens",
