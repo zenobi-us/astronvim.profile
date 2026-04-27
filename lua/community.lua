@@ -13,7 +13,6 @@ return {
   { import = "astrocommunity.search.grug-far-nvim" },
   { import = "astrocommunity.utility.lua-json5" },
   { import = "astrocommunity.pack.lua" },
-  { import = "astrocommunity.pack.go" },
   { import = "astrocommunity.pack.html-css" },
   { import = "astrocommunity.pack.typescript" },
   { import = "astrocommunity.colorscheme.nightfox-nvim" },

@@ -16,9 +16,6 @@ return {
         "vtsls",
         "tombi",
         "graphql-language-service-cli",
-
-        -- install debuggers
-        "debugpy",
       },
       -- Suppress errors for optional tools that may not be available
       auto_update = true,
