@@ -467,6 +467,10 @@ return {
         ["<C-S-Up>"] = { "<C-o>vk", desc = "Select line up" },
         ["<C-S-Down>"] = { "<C-o>vj", desc = "Select line down" },
 
+        -- Undo/Redo in insert mode
+        ["<C-z>"] = { "<C-o>u", desc = "Undo" },
+        ["<C-S-z>"] = { "<C-o><C-r>", desc = "Redo" },
+
         -- Trigger completion dropdown
         ["<C-Space>"] = {
           function() require("cmp").complete() end,
