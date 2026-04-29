@@ -477,7 +477,38 @@ return {
           desc = "Trigger completion",
         },
 
-        -- Minuet handles AI suggestion keymaps in its own plugin config
+        -- Copilot keymaps
+        ["<Tab>"] = {
+          function()
+            if require("copilot.suggestion").is_visible() then
+              require("copilot.suggestion").accept()
+            else
+              vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n")
+            end
+          end,
+          desc = "Accept Copilot suggestion or tab",
+        },
+
+        -- Toggle last used toggleterm layout (Ctrl+~)
+        ["<C-~>"] = {
+          function() require("toggleterm").toggle() end,
+          desc = "Toggle last used toggleterm",
+        },
+
+        ["<M-]>"] = {
+          function() require("copilot.suggestion").next() end,
+          desc = "Next Copilot suggestion",
+        },
+
+        ["<M-[>"] = {
+          function() require("copilot.suggestion").prev() end,
+          desc = "Previous Copilot suggestion",
+        },
+
+        ["<C-]>"] = {
+          function() require("copilot.suggestion").dismiss() end,
+          desc = "Dismiss Copilot suggestion",
+        },
 
         -- Paste from clipboard (Ctrl+V)
         ["<C-v>"] = { "<C-r>+", desc = "Paste from clipboard" },
