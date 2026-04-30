@@ -364,7 +364,7 @@ return {
         ["<Leader>la"] = { desc = "Code action" },
         ["<Leader>lA"] = { desc = "Source action" },
         ["<Leader>lG"] = { desc = "Search workspace symbols" },
-        ["<Leader>ll"] = { "<cmd>Wayfinder<cr>", desc = "Open Wayfinder" },
+        ["<Leader>lw"] = { "<cmd>Wayfinder<cr>", desc = "Open Wayfinder" },
         ["<Leader>lC"] = { desc = "Refresh code lenses" },
         ["<Leader>lL"] = { desc = "Run code lens" },
 
