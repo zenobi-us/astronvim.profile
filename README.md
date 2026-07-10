@@ -1,6 +1,6 @@
-![](./lua/custom/dashboard-logo.nvim/lua/dashboard-logo/logos/grudge_axe.gif)
-
 # Zenobius AstroNvim Profile
+
+![](./lua/custom/dashboard-logo.nvim/lua/dashboard-logo/logos/grudge_axe.gif)
 
 > **NOTE:** This is for AstroNvim v5+
 
