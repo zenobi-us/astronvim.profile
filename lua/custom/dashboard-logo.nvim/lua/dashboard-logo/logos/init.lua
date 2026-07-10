@@ -69,4 +69,6 @@ return {
   default = "grudge_axe",
   neovim = load "neovim",
   grudge_axe = load "grudge_axe",
+  ancestor_core = load "ancestor_core",
+  data_beard = load "data_beard",
 }
