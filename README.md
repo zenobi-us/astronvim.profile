@@ -1,4 +1,6 @@
-# AstroNvim Configuration
+![](./lua/custom/dashboard-logo.nvim/lua/dashboard-logo/logos/grudge_axe.gif)
+
+# Zenobius AstroNvim Profile
 
 > **NOTE:** This is for AstroNvim v5+
 
