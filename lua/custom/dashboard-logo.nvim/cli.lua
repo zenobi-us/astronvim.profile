@@ -41,11 +41,21 @@ local function render()
   for _, item in ipairs(frame) do
     local left = math.max(0, math.floor((columns - #item.line) / 2))
     output[#output + 1] = (" "):rep(left)
-    if item.color then
-      local red, green, blue = item.color:match "#(%x%x)(%x%x)(%x%x)"
-      output[#output + 1] = ("\27[38;2;%d;%d;%dm"):format(tonumber(red, 16), tonumber(green, 16), tonumber(blue, 16))
+    local previous_color
+    for _, segment in ipairs(item.segments) do
+      local color = logo.filter_color(segment.color, item.filter)
+      if color ~= previous_color then
+        if color then
+          local red, green, blue = color:match "#(%x%x)(%x%x)(%x%x)"
+          output[#output + 1] = ("\27[38;2;%d;%d;%dm"):format(tonumber(red, 16), tonumber(green, 16), tonumber(blue, 16))
+        else
+          output[#output + 1] = "\27[0m"
+        end
+        previous_color = color
+      end
+      output[#output + 1] = segment.text
     end
-    output[#output + 1] = item.line .. "\27[0m\n"
+    output[#output + 1] = "\27[0m\n"
   end
   io.write(table.concat(output))
   io.flush()

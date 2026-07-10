@@ -24,8 +24,31 @@ M.interval = 90
 
 local function glitch_line(line, offset)
   if offset > 0 then return (" "):rep(offset) .. line end
-  if offset < 0 then return line:sub(math.min(-offset + 1, #line)) end
+  if offset < 0 then return line:sub(-offset + 1) end
   return line
+end
+
+local function glitch_segments(segments, offset)
+  if offset == 0 then return segments end
+  if offset > 0 then
+    local shifted = { { text = (" "):rep(offset) } }
+    for _, segment in ipairs(segments) do shifted[#shifted + 1] = segment end
+    return shifted
+  end
+
+  local shifted = {}
+  local remove = -offset
+  for _, segment in ipairs(segments) do
+    local text = segment.text
+    if remove >= #text then
+      remove = remove - #text
+    else
+      shifted[#shifted + 1] = { text = text:sub(remove + 1), color = segment.color }
+      remove = 0
+    end
+  end
+  if #shifted == 0 then shifted[1] = { text = "" } end
+  return shifted
 end
 
 local function block_at(blocks, line)
@@ -60,9 +83,12 @@ function M.apply(frame, state)
     local block = block_at(blocks, i)
     local offset = block and block.offset or (state.glitch_offsets and state.glitch_offsets[i]) or 0
     local burn_color = burn_at(waves, i)
+    local filter = burn_color or M.colors[((i - 1 + state.color_offset) % #M.colors) + 1]
     effected[i] = {
       line = glitch_line(item.line, offset),
-      color = burn_color or M.colors[((i - 1 + state.color_offset) % #M.colors) + 1],
+      segments = glitch_segments(item.segments, offset),
+      color = filter,
+      filter = filter,
       glitch = offset ~= 0,
       glow = burn_color ~= nil,
     }

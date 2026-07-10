@@ -6,13 +6,18 @@ local frame = logo.generate { color_offset = 0, glitch_offsets = {} }
 local rendered = logo.render()
 local plain = logo.generate({}, nil, "none")
 
-assert(logo.logos.default == "votann")
+assert(logo.logos.default == "grudge_axe")
 assert(#frame == #lines)
 assert(rendered[1].line == lines[1] and rendered[1].color == nil)
 assert(plain[1].line == lines[1] and plain[1].color == nil)
 assert(frame[1].line == lines[1])
 assert(frame[1].color == logo.effects.glitch.colors[1])
 assert(frame[#logo.effects.glitch.colors + 1].color == logo.effects.glitch.colors[1])
+assert(logo.filter_color("#ffffff", "#16802d") == "#16802d")
+assert(logo.filter_color("#000000", "#16802d") == "#000000")
+
+local ansi = logo.render "grudge_axe"
+assert(ansi[1].segments[1].color == "#000000")
 
 local block_frame = logo.generate({
   color_offset = 0,
@@ -23,6 +28,15 @@ assert(block_frame[3].line == lines[3])
 assert(block_frame[4].line == "  " .. lines[4])
 assert(block_frame[8].line == "  " .. lines[8])
 assert(block_frame[9].line == lines[9])
+
+local neovim_lines = logo.logos.neovim
+local clipped_frame = logo.generate({
+  color_offset = 0,
+  glitch_blocks = { { first = #neovim_lines, last = #neovim_lines, offset = -4, ttl = 2 } },
+  burn_waves = {},
+}, "neovim")
+assert(clipped_frame[#neovim_lines].line == "")
+assert(clipped_frame[#neovim_lines].segments[1].text == "")
 
 local burn_frame = logo.generate({
   color_offset = 0,

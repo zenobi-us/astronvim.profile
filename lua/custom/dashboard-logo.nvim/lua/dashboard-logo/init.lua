@@ -15,12 +15,35 @@ local function effect(name)
   return M.effects[name]
 end
 
+local function rgb(color)
+  local red, green, blue = color:match "#(%x%x)(%x%x)(%x%x)"
+  assert(red, "invalid RGB colour: " .. color)
+  return tonumber(red, 16), tonumber(green, 16), tonumber(blue, 16)
+end
+
+---@param source? string
+---@param filter? string
+---@return string?
+function M.filter_color(source, filter)
+  if not filter then return source end
+  local red, green, blue = rgb(source or "#ffffff")
+  local filter_red, filter_green, filter_blue = rgb(filter)
+  local luminance = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255
+  luminance = math.floor(luminance * 15 + 0.5) / 15
+  return ("#%02x%02x%02x"):format(
+    math.floor(filter_red * luminance + 0.5),
+    math.floor(filter_green * luminance + 0.5),
+    math.floor(filter_blue * luminance + 0.5)
+  )
+end
+
 ---@param name? string
 ---@return table[]
 function M.render(name)
   local frame = {}
-  for i, line in ipairs(lines(name)) do
-    frame[i] = { line = line }
+  local logo = lines(name)
+  for i, line in ipairs(logo) do
+    frame[i] = { line = line, segments = logo.segments[i] }
   end
   return frame
 end

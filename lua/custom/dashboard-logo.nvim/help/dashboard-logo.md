@@ -19,8 +19,10 @@ The watch preview reloads the logo module every frame, so saved edits appear
 without restarting the command. It uses plain Lua and ANSI terminal colours;
 Neovim is not loaded. Press CTRL-C to stop it.
 
-Logo line data lives under `lua/dashboard-logo/logos/`. New logos must be
-added to `logos/init.lua`; select one with `setup { logo = "name" }`.
+Logo data lives in ANSI files under `lua/dashboard-logo/logos/`. New logos
+must be added to `logos/init.lua`; select one with `setup { logo = "name" }`.
+True-colour SGR sequences are parsed as source colours. Effects tint their
+luminance instead of replacing their shading.
 
 Effects live under `lua/dashboard-logo/effects/`. Add an effect to
 `effects/init.lua`; select one with `setup { effect = "name" }`.
