@@ -66,7 +66,7 @@ local function load(name)
 end
 
 return {
-  default = "data_beard",
+  default = "grudge_axe",
   neovim = load "neovim",
   grudge_axe = load "grudge_axe",
   ancestor_core = load "ancestor_core",
