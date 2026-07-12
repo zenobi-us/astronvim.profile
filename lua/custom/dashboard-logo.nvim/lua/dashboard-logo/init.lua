@@ -67,7 +67,7 @@ function M.advance(state, name, effect_name)
   return state
 end
 
----@param opts? { logo?: string, effect?: string, update?: fun(frame: table[]) }
+---@param opts? { logo?: string, effect?: string, color?: string, update?: fun(frame: table[]) }
 ---@return table
 function M.new(opts)
   opts = opts or {}
@@ -75,7 +75,7 @@ function M.new(opts)
   local effect_name = opts.effect or M.effects.default
   local selected = effect(effect_name)
   local rendered = M.render(name)
-  local state = {}
+  local state = { color = opts.color }
   local update = opts.update or function() end
   local animation = { interval = selected.interval or 120 }
 

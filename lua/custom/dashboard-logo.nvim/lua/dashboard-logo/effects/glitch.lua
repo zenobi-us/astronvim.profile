@@ -22,6 +22,60 @@ M.burn_colors = {
 }
 M.interval = 90
 
+local function linear(channel)
+  channel = channel / 255
+  return channel <= 0.04045 and channel / 12.92 or ((channel + 0.055) / 1.055) ^ 2.4
+end
+
+local function srgb(channel)
+  channel = channel <= 0.0031308 and channel * 12.92 or 1.055 * channel ^ (1 / 2.4) - 0.055
+  return math.floor(math.max(0, math.min(1, channel)) * 255 + 0.5)
+end
+
+local function luminance(color)
+  local red, green, blue = color:match "^#(%x%x)(%x%x)(%x%x)$"
+  assert(red, "invalid RGB colour: " .. tostring(color))
+  red, green, blue = linear(tonumber(red, 16)), linear(tonumber(green, 16)), linear(tonumber(blue, 16))
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue
+end
+
+local function luminances(colors)
+  local values = {}
+  for i, color in ipairs(colors) do values[i] = luminance(color) end
+  return values
+end
+
+local color_luminance = luminances(M.colors)
+local burn_luminance = luminances(M.burn_colors)
+
+local function shade(color, target)
+  local red, green, blue = color:match "^#(%x%x)(%x%x)(%x%x)$"
+  assert(red, "invalid RGB colour: " .. tostring(color))
+  local channels = { linear(tonumber(red, 16)), linear(tonumber(green, 16)), linear(tonumber(blue, 16)) }
+  local source_luminance = 0.2126 * channels[1] + 0.7152 * channels[2] + 0.0722 * channels[3]
+
+  if target <= source_luminance then
+    local scale = source_luminance == 0 and 0 or target / source_luminance
+    for i = 1, 3 do channels[i] = channels[i] * scale end
+  else
+    local mix = source_luminance == 1 and 0 or (target - source_luminance) / (1 - source_luminance)
+    for i = 1, 3 do channels[i] = channels[i] + (1 - channels[i]) * mix end
+  end
+
+  return ("#%02x%02x%02x"):format(srgb(channels[1]), srgb(channels[2]), srgb(channels[3]))
+end
+
+local function palette(color, targets)
+  local colors = {}
+  for i, target in ipairs(targets) do colors[i] = shade(color, target) end
+  return colors
+end
+
+function M.palette(color)
+  if not color then return M.colors, M.burn_colors end
+  return palette(color, color_luminance), palette(color, burn_luminance)
+end
+
 local function glitch_line(line, offset)
   if offset > 0 then return (" "):rep(offset) .. line end
   if offset < 0 then return line:sub(-offset + 1) end
@@ -57,7 +111,7 @@ local function block_at(blocks, line)
   end
 end
 
-local function burn_at(waves, line)
+local function burn_at(waves, line, burn_colors)
   local brightest
   for _, wave in ipairs(waves) do
     local rank
@@ -66,11 +120,11 @@ local function burn_at(waves, line)
     elseif line < wave.first then
       local head = wave.first - wave.age
       local distance = line - head
-      if distance >= 0 and distance < #M.burn_colors then rank = distance + 1 end
+      if distance >= 0 and distance < #burn_colors then rank = distance + 1 end
     end
     if rank and (not brightest or rank < brightest) then brightest = rank end
   end
-  return brightest and M.burn_colors[brightest]
+  return brightest and burn_colors[brightest]
 end
 
 function M.apply(frame, state)
@@ -78,12 +132,18 @@ function M.apply(frame, state)
   local blocks = state.glitch_blocks or {}
   local waves = state.burn_waves or {}
   local effected = {}
+  if state._glitch_color ~= state.color then
+    state._glitch_colors, state._glitch_burn_colors = M.palette(state.color)
+    state._glitch_color = state.color
+  end
+  local colors = state._glitch_colors or M.colors
+  local burn_colors = state._glitch_burn_colors or M.burn_colors
 
   for i, item in ipairs(frame) do
     local block = block_at(blocks, i)
     local offset = block and block.offset or (state.glitch_offsets and state.glitch_offsets[i]) or 0
-    local burn_color = burn_at(waves, i)
-    local filter = burn_color or M.colors[((i - 1 + state.color_offset) % #M.colors) + 1]
+    local burn_color = burn_at(waves, i, burn_colors)
+    local filter = burn_color or colors[((i - 1 + state.color_offset) % #colors) + 1]
     effected[i] = {
       line = glitch_line(item.line, offset),
       segments = glitch_segments(item.segments, offset),
