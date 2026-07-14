@@ -8,6 +8,8 @@ local function dashboard_visible()
     if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "snacks_dashboard" then return true end
   end
   return false
+end
+
 local function color(value)
   if type(value) == "number" then return ("#%06x"):format(value) end
   return value
