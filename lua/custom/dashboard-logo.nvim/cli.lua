@@ -7,12 +7,14 @@ package.path = root .. "/lua/?.lua;" .. root .. "/lua/?/init.lua;" .. package.pa
 
 local watch = false
 local effect = "glitch"
+local color
 for _, value in pairs(arg) do
   if value == "--watch" or value == "-w" then watch = true end
   effect = value:match "^%-%-effect=(.+)$" or effect
+  color = value:match "^%-%-color=(#%x%x%x%x%x%x)$" or color
 end
 
-local state = { color_offset = 0, glitch_offsets = {} }
+local state = { color_offset = 0, glitch_offsets = {}, color = color }
 
 local function terminal_size()
   local handle = io.popen "stty size 2>/dev/null < /dev/tty"

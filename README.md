@@ -1,4 +1,6 @@
-# AstroNvim Configuration
+# Zenobius AstroNvim Profile
+
+![](./lua/custom/dashboard-logo.nvim/lua/dashboard-logo/logos/grudge_axe.gif)
 
 > **NOTE:** This is for AstroNvim v5+
 
@@ -41,7 +43,7 @@ Testing
 ## Plugins
 
 - **AstroNvim Core**: astrocore, astrolsp, astroui — base IDE framework with LSP integration
-- **Search & Navigation**: fzf-lua, Snacks.nvim, dashboard-logo.nvim — fuzzy finding, animated CRT-style startup dashboard with selectable logo assets, and command/keymap discovery
+- **Search & Navigation**: fzf-lua, Snacks.nvim, dashboard-logo.nvim — fuzzy finding, animated CRT-style startup dashboard with theme-derived colour palettes, terminal previews, selectable logo assets, and command/keymap discovery
 - **AI Coding**: CodeCompanion — AI pair programming with img-clip for image insertion, GitHub Copilot — AI code suggestions
 - **Testing**: neotest + neotest-vitest — run and debug tests inline
 - **Git**: octo.nvim, worktrees.nvim, codediff.nvim — GitHub interaction, git worktree management, and VSCode-style diffs

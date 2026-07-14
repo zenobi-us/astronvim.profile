@@ -8,6 +8,9 @@ local function dashboard_visible()
     if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "snacks_dashboard" then return true end
   end
   return false
+local function color(value)
+  if type(value) == "number" then return ("#%06x"):format(value) end
+  return value
 end
 
 local function highlight(color, glow)
@@ -27,7 +30,7 @@ function M.stop()
   _G.snacks_dashboard_logo_timer = nil
 end
 
----@param opts? { logo?: string, effect?: string, update?: fun(frame: table[]) }
+---@param opts? { logo?: string, effect?: string, color?: string|integer, update?: fun(frame: table[]) }
 ---@return { section: fun(): table, stop: fun() }
 function M.setup(opts)
   opts = opts or {}
@@ -35,6 +38,7 @@ function M.setup(opts)
   local animation = logo.new {
     logo = opts.logo,
     effect = opts.effect,
+    color = color(opts.color),
     update = function(next_frame)
       frame = next_frame
       if opts.update then opts.update(next_frame) end
