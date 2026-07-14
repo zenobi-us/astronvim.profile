@@ -3,6 +3,13 @@ local logo = require "dashboard-logo"
 local M = {}
 local highlights = {}
 
+local function dashboard_visible()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "snacks_dashboard" then return true end
+  end
+  return false
+end
+
 local function highlight(color, glow)
   if not color then return nil end
   local name = "DashboardLogo" .. color:sub(2) .. (glow and "Glow" or "")
@@ -35,7 +42,20 @@ function M.setup(opts)
   }
   frame = animation.frame()
 
+  local function start()
+    if _G.snacks_dashboard_logo_timer then return end
+    _G.snacks_dashboard_logo_timer = vim.uv.new_timer()
+    _G.snacks_dashboard_logo_timer:start(animation.interval, animation.interval, vim.schedule_wrap(function()
+      if not dashboard_visible() then
+        M.stop()
+        return
+      end
+      animation.tick()
+    end))
+  end
+
   local function section()
+    start()
     local text = {}
     for i, item in ipairs(frame) do
       for _, segment in ipairs(item.segments) do
@@ -53,9 +73,6 @@ function M.setup(opts)
   end
 
   M.stop()
-  _G.snacks_dashboard_logo_timer = vim.uv.new_timer()
-  _G.snacks_dashboard_logo_timer:start(animation.interval, animation.interval, vim.schedule_wrap(animation.tick))
-
   return { section = section, stop = M.stop }
 end
 
