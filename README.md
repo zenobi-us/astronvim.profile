@@ -42,7 +42,7 @@ Testing
 
 ## Plugins
 
-- **AstroNvim Core**: astrocore, astrolsp, astroui — base IDE framework with LSP integration
+- **AstroNvim Core**: astrocore, astrolsp, astroui — base IDE framework with LSP integration and always-on word wrapping
 - **Search & Navigation**: fzf-lua, Snacks.nvim, dashboard-logo.nvim — fuzzy finding, animated CRT-style startup dashboard with theme-derived colour palettes, terminal previews, selectable logo assets, and command/keymap discovery
 - **AI Coding**: CodeCompanion — AI pair programming with img-clip for image insertion, GitHub Copilot — AI code suggestions
 - **Testing**: neotest + neotest-vitest — run and debug tests inline

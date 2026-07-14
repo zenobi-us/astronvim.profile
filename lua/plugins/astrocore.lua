@@ -41,7 +41,9 @@ return {
         number = true, -- sets vim.opt.number
         spell = false, -- sets vim.opt.spell
         signcolumn = "yes", -- sets vim.opt.signcolumn to yes
-        wrap = false, -- sets vim.opt.wrap
+        wrap = true, -- wrap long lines
+        linebreak = true, -- wrap at word boundaries
+        breakindent = true, -- preserve indentation on wrapped lines
         modeline = true, -- enable modeline parsing
         modelines = 5, -- check first/last 5 lines for modelines
         whichwrap = "b,s,<,>,[,]", -- allow arrow keys to wrap across lines
