@@ -48,6 +48,8 @@ function M.setup(opts)
     end,
   }
   frame = animation.frame()
+  local text = {}
+  local section_item = { text = text, pane = 1, align = "center", indent = 0, padding = 4 }
 
   local function start()
     if _G.snacks_dashboard_logo_timer then return end
@@ -63,20 +65,26 @@ function M.setup(opts)
 
   local function section()
     start()
-    local text = {}
+    local length = 0
     for i, item in ipairs(frame) do
       for _, segment in ipairs(item.segments) do
         local hl = highlight(logo.filter_color(segment.color, item.filter), item.glow)
-        local previous = text[#text]
+        local previous = text[length]
         if previous and previous.hl == hl and not previous[1]:find("\n", 1, true) then
           previous[1] = previous[1] .. segment.text
         else
-          text[#text + 1] = { segment.text, hl = hl }
+          length = length + 1
+          local entry = text[length] or {}
+          entry[1], entry.hl = segment.text, hl
+          text[length] = entry
         end
       end
-      if i < #frame then text[#text][1] = text[#text][1] .. "\n" end
+      if i < #frame then text[length][1] = text[length][1] .. "\n" end
     end
-    return { text = text, pane = 1, align = "center", indent = 0, padding = 4 }
+    for i = length + 1, #text do
+      text[i] = nil
+    end
+    return section_item
   end
 
   M.stop()
