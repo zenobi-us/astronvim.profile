@@ -43,7 +43,6 @@ function M.setup(opts)
   local start_row
   local plain = {}
   local text = { { "" } }
-  local extmark_opts = {}
 
   local function geometry_changed(previous, next_frame)
     if not previous or #previous ~= #next_frame then return true end
@@ -103,8 +102,7 @@ function M.setup(opts)
           mark_end = next_col
         else
           if mark_hl and mark_end > mark_col then
-            extmark_opts.end_col, extmark_opts.hl_group = mark_end, mark_hl
-            vim.api.nvim_buf_set_extmark(dashboard.buf, namespace, row - 1, mark_col, extmark_opts)
+            vim.api.nvim_buf_add_highlight(dashboard.buf, namespace, mark_hl, row - 1, mark_col, mark_end)
           end
           mark_col, mark_end = col, next_col
           mark_hl = segment.visible and hl or nil
@@ -112,8 +110,7 @@ function M.setup(opts)
         col = next_col
       end
       if mark_hl and mark_end > mark_col then
-        extmark_opts.end_col, extmark_opts.hl_group = mark_end, mark_hl
-        vim.api.nvim_buf_set_extmark(dashboard.buf, namespace, row - 1, mark_col, extmark_opts)
+        vim.api.nvim_buf_add_highlight(dashboard.buf, namespace, mark_hl, row - 1, mark_col, mark_end)
       end
     end
   end

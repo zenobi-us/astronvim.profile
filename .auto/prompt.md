@@ -77,5 +77,12 @@ Prefer changes in `snacks.lua`; measured evidence says full redraw and per-segme
 - Discarded: serialized row cache. Micro section hit 3.9 µs but CPU regressed and RSS rose; benchmark-local overfit.
 - Discarded: cached dashboard buffer, per-segment highlight cache, nested highlight cache, newline-boundary Lua branch, numeric loops. No real CPU win.
 - Noise calibration on identical code varied CPU by about 3%; marginal gains need confirmation.
-- Whole Snacks redraw now dominates. Further section micro-tuning is unlikely to matter.
-- Measurement defect corrected before structural work: `delivered_fps` now counts generated animation frames through `on_frame`; `redraw_fps` separately counts full Snacks updates. Previous benchmark conflated the two and could not evaluate equivalent highlight-only rendering.
+- Measurement defect corrected before structural work: `delivered_fps` counts generated frames through `on_frame`; `redraw_fps` separately counts full Snacks updates.
+- Discarded: stable mutable highlight groups. Redraws fell, but hundreds of `nvim_set_hl` calls doubled CPU.
+- Kept: Snacks owns plain logo text; custom namespace owns color extmarks. Color frames no longer rebuild dashboard. CPU fell to ~3.0%.
+- Kept: skip whitespace-only foreground extmarks, precompute segment visibility, merge adjacent equal-highlight spans. CPU fell to ~2.7% before geometry work.
+- Kept: direct single-pane geometry row updates with multi-pane full-update fallback. Full redraw rate reached zero and CPU fell to ~2.0%.
+- Kept: reusable extmark options table plus deterministic geometry differential test and README contract.
+- Discarded: extmark ID reuse and cached logo columns; both regressed CPU. Namespace clear + recreate and inline position discovery are faster.
+- Current best: 2.000% CPU, 11.23 delivered FPS, 0 full redraw FPS, ~39 MiB max RSS. Improvement versus frame-aware baseline: ~51.6% CPU and ~25% RSS.
+- Current run-to-run noise around the best is roughly 2–6%; require material gains or repeated confirmation.
