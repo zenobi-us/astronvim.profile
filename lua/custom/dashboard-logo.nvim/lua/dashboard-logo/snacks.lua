@@ -33,7 +33,7 @@ function M.stop()
   _G.snacks_dashboard_logo_timer = nil
 end
 
----@param opts? { logo?: string, effect?: string, color?: string|integer, update?: fun(frame: table[]) }
+---@param opts? { logo?: string, effect?: string, color?: string|integer, on_frame?: fun(frame: table[]), update?: fun(frame: table[]) }
 ---@return { section: fun(): table, stop: fun() }
 function M.setup(opts)
   opts = opts or {}
@@ -44,6 +44,7 @@ function M.setup(opts)
     color = color(opts.color),
     update = function(next_frame)
       frame = next_frame
+      if opts.on_frame then opts.on_frame(next_frame) end
       if opts.update then opts.update(next_frame) end
     end,
   }

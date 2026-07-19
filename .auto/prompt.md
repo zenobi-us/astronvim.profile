@@ -22,6 +22,7 @@ Do not optimize only synthetic core math while regressing the real Snacks dashbo
   - `section_alloc_kib` — section serialization allocation per call.
   - `core_mean_us` — default grudge-axe/glitch core tick mean.
   - `delivered_fps` — timer delivery guard; MUST remain between 10 and 13 FPS.
+  - `redraw_fps` — full Snacks redraw rate. Baseline matches delivered FPS; highlight-only rendering may reduce this only if frame output remains correct.
   - `max_rss_kib` — median peak resident memory.
 
 ## How to Run
@@ -45,8 +46,8 @@ Prefer changes in `snacks.lua`; measured evidence says full redraw and per-segme
 
 ## Off Limits
 
-- `lua/custom/dashboard-logo.nvim/tests/perf.lua` — benchmark implementation is locked after baseline.
-- `.auto/measure.sh` and `.auto/checks.sh` — locked after baseline unless a proven measurement defect exists and is documented before editing.
+- `lua/custom/dashboard-logo.nvim/tests/perf.lua` — benchmark implementation is locked after the frame-aware rebaseline.
+- `.auto/measure.sh` and `.auto/checks.sh` — locked after the frame-aware rebaseline unless another proven measurement defect exists and is documented before editing.
 - `lua/plugins/snacks.lua` — user-facing integration and cadence contract.
 - ANSI/GIF assets.
 - Installed `snacks.nvim` source.
@@ -68,5 +69,13 @@ Prefer changes in `snacks.lua`; measured evidence says full redraw and per-segme
 
 ## What's Been Tried
 
-- Baseline instrumentation created. No optimization experiments yet.
-- Prior reconnaissance measured core tick as cheap, section serialization as material, and whole Snacks redraw as dominant.
+- Baseline: 4.975% CPU, 7.122 ms full-update p95, 798.5 µs / 146.1 KiB section serialization.
+- Kept: exact filtered-color result cache. CPU 4.157%; section 203.2 µs.
+- Kept: cached highlight names. CPU 4.125%; section 125.1 µs.
+- Kept: reused section/text entry tables. CPU 4.010%; section allocation effectively zero.
+- Kept: nested source->filter tint cache keys. Current best CPU 3.879%; section 77.4 µs.
+- Discarded: serialized row cache. Micro section hit 3.9 µs but CPU regressed and RSS rose; benchmark-local overfit.
+- Discarded: cached dashboard buffer, per-segment highlight cache, nested highlight cache, newline-boundary Lua branch, numeric loops. No real CPU win.
+- Noise calibration on identical code varied CPU by about 3%; marginal gains need confirmation.
+- Whole Snacks redraw now dominates. Further section micro-tuning is unlikely to matter.
+- Measurement defect corrected before structural work: `delivered_fps` now counts generated animation frames through `on_frame`; `redraw_fps` separately counts full Snacks updates. Previous benchmark conflated the two and could not evaluate equivalent highlight-only rendering.

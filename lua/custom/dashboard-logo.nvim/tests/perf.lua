@@ -150,6 +150,7 @@ local function soak()
   local measuring = false
   local update_started
   local previous_update
+  local frame_count = 0
   local update_samples = {}
   local interval_samples = {}
 
@@ -177,6 +178,9 @@ local function soak()
   })
 
   local integration = require("dashboard-logo.snacks").setup {
+    on_frame = function()
+      if measuring then frame_count = frame_count + 1 end
+    end,
     update = function()
       Snacks.dashboard.update()
     end,
@@ -223,8 +227,11 @@ local function soak()
     warmup_ms = opts.warmup,
     duration_ms = elapsed_ms,
     expected_interval_ms = opts.interval,
+    frames = frame_count,
+    redraws = #update_samples,
     updates = #update_samples,
-    delivered_fps = #update_samples / (elapsed_ms / 1000),
+    delivered_fps = frame_count / (elapsed_ms / 1000),
+    redraw_fps = #update_samples / (elapsed_ms / 1000),
     update_ms = stats(update_samples, 1e6),
     delivered_interval_ms = interval_ms,
     late_updates = late_updates,
