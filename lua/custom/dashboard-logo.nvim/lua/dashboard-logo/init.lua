@@ -29,8 +29,12 @@ local filtered_colors = {}
 function M.filter_color(source, filter)
   if not filter then return source end
   source = source or "#ffffff"
-  local key = source .. filter
-  if filtered_colors[key] then return filtered_colors[key] end
+  local by_filter = filtered_colors[source]
+  if not by_filter then
+    by_filter = {}
+    filtered_colors[source] = by_filter
+  end
+  if by_filter[filter] then return by_filter[filter] end
 
   local red, green, blue = rgb(source)
   local filter_red, filter_green, filter_blue = rgb(filter)
@@ -41,7 +45,7 @@ function M.filter_color(source, filter)
     math.floor(filter_green * luminance + 0.5),
     math.floor(filter_blue * luminance + 0.5)
   )
-  filtered_colors[key] = color
+  by_filter[filter] = color
   return color
 end
 
