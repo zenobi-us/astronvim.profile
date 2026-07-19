@@ -134,14 +134,20 @@ function M.setup(opts)
       local col = first - 1
       local chunks = virtual_lines[i] or {}
       virtual_lines[i] = chunks
-      local segments = display_segments(i, item)
-      for j, segment in ipairs(segments) do
+      local length = 0
+      for _, segment in ipairs(display_segments(i, item)) do
         local hl = highlight(logo.filter_color(segment.color, item.filter), item.glow)
-        local chunk = chunks[j] or {}
-        chunk[1], chunk[2] = segment.text, segment.visible and hl or nil
-        chunks[j] = chunk
+        local previous = chunks[length]
+        if previous and previous[2] == hl then
+          previous[1] = previous[1] .. segment.text
+        else
+          length = length + 1
+          local chunk = chunks[length] or {}
+          chunk[1], chunk[2] = segment.text, segment.visible and hl or nil
+          chunks[length] = chunk
+        end
       end
-      for j = #segments + 1, #chunks do chunks[j] = nil end
+      for j = length + 1, #chunks do chunks[j] = nil end
       local extmark = virtual_opts[i] or { virt_text_pos = "overlay", hl_mode = "replace" }
       extmark.virt_text = chunks
       virtual_opts[i] = extmark
