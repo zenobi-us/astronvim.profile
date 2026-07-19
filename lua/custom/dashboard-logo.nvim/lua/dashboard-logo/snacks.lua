@@ -62,16 +62,29 @@ function M.setup(opts)
         or ""
       local first = rendered:find(item.line, 1, true) or 1
       local col = first - 1
+      local mark_col, mark_end, mark_hl
       for _, segment in ipairs(item.segments) do
         local next_col = col + #segment.text
         local hl = highlight(logo.filter_color(segment.color, item.filter), item.glow)
-        if hl and next_col > col and segment.visible then
-          vim.api.nvim_buf_set_extmark(dashboard.buf, namespace, row - 1, col, {
-            end_col = next_col,
-            hl_group = hl,
-          })
+        if segment.visible and hl == mark_hl then
+          mark_end = next_col
+        else
+          if mark_hl and mark_end > mark_col then
+            vim.api.nvim_buf_set_extmark(dashboard.buf, namespace, row - 1, mark_col, {
+              end_col = mark_end,
+              hl_group = mark_hl,
+            })
+          end
+          mark_col, mark_end = col, next_col
+          mark_hl = segment.visible and hl or nil
         end
         col = next_col
+      end
+      if mark_hl and mark_end > mark_col then
+        vim.api.nvim_buf_set_extmark(dashboard.buf, namespace, row - 1, mark_col, {
+          end_col = mark_end,
+          hl_group = mark_hl,
+        })
       end
     end
   end
