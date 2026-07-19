@@ -17,11 +17,12 @@ end
 
 local function highlight(color, glow)
   if not color then return nil end
+  local key = color .. (glow and "Glow" or "")
+  if highlights[key] then return highlights[key] end
+
   local name = "DashboardLogo" .. color:sub(2) .. (glow and "Glow" or "")
-  if not highlights[name] then
-    vim.api.nvim_set_hl(0, name, { fg = color, ctermfg = glow and 120 or 37 })
-    highlights[name] = true
-  end
+  vim.api.nvim_set_hl(0, name, { fg = color, ctermfg = glow and 120 or 37 })
+  highlights[key] = name
   return name
 end
 
