@@ -84,5 +84,11 @@ Prefer changes in `snacks.lua`; measured evidence says full redraw and per-segme
 - Kept: direct single-pane geometry row updates with multi-pane full-update fallback. Full redraw rate reached zero and CPU fell to ~2.0%.
 - Kept: reusable extmark options table plus deterministic geometry differential test and README contract.
 - Discarded: extmark ID reuse and cached logo columns; both regressed CPU. Namespace clear + recreate and inline position discovery are faster.
-- Current best: 2.000% CPU, 11.23 delivered FPS, 0 full redraw FPS, ~39 MiB max RSS. Improvement versus frame-aware baseline: ~51.6% CPU and ~25% RSS.
-- Current run-to-run noise around the best is roughly 2–6%; require material gains or repeated confirmation.
+- Kept: one overlay virtual-text extmark per logo line replaced ~841 range-highlight calls with 35 extmark calls.
+- Kept: adapter-local display chunk cache folds whitespace into neighboring chunks without mutating public ANSI segment metadata; detailed tests reconstruct every line from extmark chunks.
+- Kept: runtime merge of adjacent equal-highlight chunks using reused chunk tables.
+- Kept: removed redundant `hl_mode = "replace"`; Neovim default is already replace.
+- Discarded: parser-level whitespace compaction (broke public segment color contract), shade-based chunk cache, display visibility deletion, span caches, numeric loops, localized API upvalues, generic allocation reuse.
+- Current best: 0.997% CPU, 11.21 delivered FPS, 0 full redraw FPS, ~38 MiB max RSS. Improvement versus frame-aware baseline: ~75.9% CPU and ~27% RSS.
+- Measured idle Neovim floor is roughly 0.16–0.35% CPU. Remaining animation overhead is about 0.65–0.85 percentage points.
+- Current run-to-run noise around the best is roughly 2–8%; require material gains or repeated confirmation.

@@ -127,9 +127,7 @@ function M.setup(opts)
     vim.api.nvim_buf_clear_namespace(dashboard.buf, namespace, start_row - 1, start_row - 1 + #frame)
     for i, item in ipairs(frame) do
       local row = start_row + i - 1
-      local rendered = dashboard.lines and dashboard.lines[row]
-        or vim.api.nvim_buf_get_lines(dashboard.buf, row - 1, row, false)[1]
-        or ""
+      local rendered = dashboard.lines[row] or ""
       local first = rendered:find(item.line, 1, true) or 1
       local col = first - 1
       local chunks = virtual_lines[i] or {}
