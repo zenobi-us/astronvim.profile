@@ -52,6 +52,38 @@ function M.setup(opts)
     return false
   end
 
+  local function update_geometry()
+    if not dashboard
+      or not start_row
+      or not vim.api.nvim_buf_is_valid(dashboard.buf)
+      or not dashboard.panes
+      or #dashboard.panes ~= 1
+    then
+      return false
+    end
+
+    local rows = {}
+    for i, item in ipairs(frame) do
+      local width = vim.api.nvim_strwidth(item.line)
+      local before, after
+      if width > dashboard.opts.width then
+        before = math.max(dashboard.col - math.floor((width - dashboard.opts.width) / 2), 0)
+        after = 0
+      else
+        local padding = dashboard.opts.width - width
+        before = dashboard.col + math.floor(padding / 2)
+        after = padding - math.floor(padding / 2)
+      end
+      rows[i] = (" "):rep(before) .. item.line .. (" "):rep(after)
+      dashboard.lines[start_row + i - 1] = rows[i]
+    end
+
+    vim.bo[dashboard.buf].modifiable = true
+    vim.api.nvim_buf_set_lines(dashboard.buf, start_row - 1, start_row - 1 + #rows, false, rows)
+    vim.bo[dashboard.buf].modifiable = false
+    return true
+  end
+
   local function apply_highlights()
     if not dashboard or not start_row or not vim.api.nvim_buf_is_valid(dashboard.buf) then return end
     vim.api.nvim_buf_clear_namespace(dashboard.buf, namespace, start_row - 1, start_row - 1 + #frame)
@@ -96,7 +128,7 @@ function M.setup(opts)
     update = function(next_frame)
       local redraw = geometry_changed(frame, next_frame)
       frame = next_frame
-      if redraw and opts.update then opts.update(next_frame) end
+      if redraw and not update_geometry() and opts.update then opts.update(next_frame) end
       apply_highlights()
       if opts.on_frame then opts.on_frame(next_frame) end
     end,
