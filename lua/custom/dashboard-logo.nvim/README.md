@@ -132,7 +132,9 @@ Table of registered effects. `effects.default` contains the default effect name.
 
 #### `setup(opts?) -> integration`
 
-Creates a Snacks dashboard section and starts its animation timer. Supports `logo`, `effect`, `color`, and `update` options. Neovim integer colours are converted to `#rrggbb` before reaching the core renderer.
+Creates a Snacks dashboard section. Its first render starts the animation timer. Supports `logo`, `effect`, `color`, `on_frame`, and `update` options. Neovim integer colours are converted to `#rrggbb` before reaching the core renderer.
+
+The adapter renders logo highlights in its own namespace. Color-only frames update those extmarks directly. `update(frame)` runs only when text geometry changes and Snacks must rebuild dashboard lines; `on_frame(frame)` runs after every frame.
 
 Returns:
 

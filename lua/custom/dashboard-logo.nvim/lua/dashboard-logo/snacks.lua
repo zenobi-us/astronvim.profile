@@ -2,6 +2,7 @@ local logo = require "dashboard-logo"
 
 local M = {}
 local highlights = {}
+local namespace = vim.api.nvim_create_namespace "dashboard-logo"
 
 local function dashboard_visible()
   for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -38,19 +39,67 @@ end
 function M.setup(opts)
   opts = opts or {}
   local frame
+  local dashboard
+  local start_row
+  local plain = {}
+  local text = { { "" } }
+
+  local function geometry_changed(previous, next_frame)
+    if not previous or #previous ~= #next_frame then return true end
+    for i, item in ipairs(next_frame) do
+      if previous[i].line ~= item.line then return true end
+    end
+    return false
+  end
+
+  local function apply_highlights()
+    if not dashboard or not start_row or not vim.api.nvim_buf_is_valid(dashboard.buf) then return end
+    vim.api.nvim_buf_clear_namespace(dashboard.buf, namespace, start_row - 1, start_row - 1 + #frame)
+    for i, item in ipairs(frame) do
+      local row = start_row + i - 1
+      local rendered = dashboard.lines and dashboard.lines[row]
+        or vim.api.nvim_buf_get_lines(dashboard.buf, row - 1, row, false)[1]
+        or ""
+      local first = rendered:find(item.line, 1, true) or 1
+      local col = first - 1
+      for _, segment in ipairs(item.segments) do
+        local next_col = col + #segment.text
+        local hl = highlight(logo.filter_color(segment.color, item.filter), item.glow)
+        if hl and next_col > col then
+          vim.api.nvim_buf_set_extmark(dashboard.buf, namespace, row - 1, col, {
+            end_col = next_col,
+            hl_group = hl,
+          })
+        end
+        col = next_col
+      end
+    end
+  end
+
   local animation = logo.new {
     logo = opts.logo,
     effect = opts.effect,
     color = color(opts.color),
     update = function(next_frame)
+      local redraw = geometry_changed(frame, next_frame)
       frame = next_frame
+      if redraw and opts.update then opts.update(next_frame) end
+      apply_highlights()
       if opts.on_frame then opts.on_frame(next_frame) end
-      if opts.update then opts.update(next_frame) end
     end,
   }
   frame = animation.frame()
-  local text = {}
-  local section_item = { text = text, pane = 1, align = "center", indent = 0, padding = 4 }
+  local section_item = {
+    text = text,
+    pane = 1,
+    align = "center",
+    indent = 0,
+    padding = 4,
+    render = function(next_dashboard, pos)
+      dashboard, start_row = next_dashboard, pos[1]
+      vim.schedule(apply_highlights)
+    end,
+  }
 
   local function start()
     if _G.snacks_dashboard_logo_timer then return end
@@ -66,25 +115,11 @@ function M.setup(opts)
 
   local function section()
     start()
-    local length = 0
     for i, item in ipairs(frame) do
-      for _, segment in ipairs(item.segments) do
-        local hl = highlight(logo.filter_color(segment.color, item.filter), item.glow)
-        local previous = text[length]
-        if previous and previous.hl == hl and not previous[1]:find("\n", 1, true) then
-          previous[1] = previous[1] .. segment.text
-        else
-          length = length + 1
-          local entry = text[length] or {}
-          entry[1], entry.hl = segment.text, hl
-          text[length] = entry
-        end
-      end
-      if i < #frame then text[length][1] = text[length][1] .. "\n" end
+      plain[i] = item.line
     end
-    for i = length + 1, #text do
-      text[i] = nil
-    end
+    for i = #frame + 1, #plain do plain[i] = nil end
+    text[1][1] = table.concat(plain, "\n")
     return section_item
   end
 

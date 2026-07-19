@@ -7,9 +7,17 @@ local logo = require("dashboard-logo.snacks").setup {
   on_frame = function() frames = frames + 1 end,
 }
 
-logo.section()
+local section = logo.section()
 assert(_G.snacks_dashboard_logo_timer)
 assert(vim.wait(500, function() return _G.snacks_dashboard_logo_timer == nil end), "timer stayed active without dashboard")
+
+local lines = vim.split(section.text[1][1], "\n", { plain = true })
+vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+section.render({ buf = 0, lines = lines }, { 1, 0 })
+assert(vim.wait(100, function()
+  local ns = vim.api.nvim_get_namespaces()["dashboard-logo"]
+  return ns and #vim.api.nvim_buf_get_extmarks(0, ns, 0, -1, {}) > 0
+end), "custom logo highlights were not rendered")
 
 vim.bo.filetype = "snacks_dashboard"
 logo.section()
