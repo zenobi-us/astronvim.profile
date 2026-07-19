@@ -45,6 +45,7 @@ function M.setup(opts)
   local text = { { "" } }
   local virtual_lines = {}
   local virtual_opts = {}
+  local chunk_cache = {}
 
   local function geometry_changed(previous, next_frame)
     if not previous or #previous ~= #next_frame then return true end
@@ -86,6 +87,41 @@ function M.setup(opts)
     return true
   end
 
+  local function display_segments(line, item)
+    local lines = chunk_cache[line]
+    if not lines then
+      lines = {}
+      chunk_cache[line] = lines
+    end
+    if lines[item.line] then return lines[item.line] end
+
+    local result = {}
+    local leading = ""
+    for _, segment in ipairs(item.segments) do
+      if segment.visible then
+        result[#result + 1] = {
+          text = leading .. segment.text,
+          color = segment.color,
+          visible = true,
+        }
+        leading = ""
+      elseif #result > 0 then
+        result[#result].text = result[#result].text .. segment.text
+      else
+        leading = leading .. segment.text
+      end
+    end
+    if leading ~= "" then
+      if #result > 0 then
+        result[#result].text = result[#result].text .. leading
+      else
+        result[1] = { text = leading, visible = false }
+      end
+    end
+    lines[item.line] = result
+    return result
+  end
+
   local function apply_highlights()
     if not dashboard or not start_row or not vim.api.nvim_buf_is_valid(dashboard.buf) then return end
     vim.api.nvim_buf_clear_namespace(dashboard.buf, namespace, start_row - 1, start_row - 1 + #frame)
@@ -98,13 +134,14 @@ function M.setup(opts)
       local col = first - 1
       local chunks = virtual_lines[i] or {}
       virtual_lines[i] = chunks
-      for j, segment in ipairs(item.segments) do
+      local segments = display_segments(i, item)
+      for j, segment in ipairs(segments) do
         local hl = highlight(logo.filter_color(segment.color, item.filter), item.glow)
         local chunk = chunks[j] or {}
         chunk[1], chunk[2] = segment.text, segment.visible and hl or nil
         chunks[j] = chunk
       end
-      for j = #item.segments + 1, #chunks do chunks[j] = nil end
+      for j = #segments + 1, #chunks do chunks[j] = nil end
       local extmark = virtual_opts[i] or { virt_text_pos = "overlay", hl_mode = "replace" }
       extmark.virt_text = chunks
       virtual_opts[i] = extmark

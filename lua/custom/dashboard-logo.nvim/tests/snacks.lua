@@ -19,6 +19,14 @@ assert(vim.wait(100, function()
   local ns = vim.api.nvim_get_namespaces()["dashboard-logo"]
   return ns and #vim.api.nvim_buf_get_extmarks(0, ns, 0, -1, {}) > 0
 end), "custom logo highlights were not rendered")
+local ns = vim.api.nvim_get_namespaces()["dashboard-logo"]
+local extmarks = vim.api.nvim_buf_get_extmarks(0, ns, 0, -1, { details = true })
+assert(#extmarks == #lines, "expected one virtual-text extmark per logo line")
+for _, extmark in ipairs(extmarks) do
+  local rendered = {}
+  for _, chunk in ipairs(extmark[4].virt_text or {}) do rendered[#rendered + 1] = chunk[1] end
+  assert(table.concat(rendered) == lines[extmark[2] + 1], "virtual text does not match logo line")
+end
 
 vim.bo.filetype = "snacks_dashboard"
 logo.section()
