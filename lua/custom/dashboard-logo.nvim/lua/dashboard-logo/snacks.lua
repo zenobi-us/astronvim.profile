@@ -47,6 +47,10 @@ function M.setup(opts)
   local virtual_lines = {}
   local virtual_opts = {}
   local virtual_ids = {}
+  local last_lines = {}
+  local last_segments = {}
+  local last_filters = {}
+  local last_glows = {}
   local chunk_cache = {}
 
   local function geometry_changed(previous, next_frame)
@@ -127,7 +131,13 @@ function M.setup(opts)
   local function apply_highlights()
     if not dashboard or not start_row or not vim.api.nvim_buf_is_valid(dashboard.buf) then return end
     for i, item in ipairs(frame) do
-      local row = start_row + i - 1
+      local unchanged = virtual_ids[i]
+        and last_lines[i] == item.line
+        and last_segments[i] == item.segments
+        and last_filters[i] == item.filter
+        and last_glows[i] == item.glow
+      if not unchanged then
+        local row = start_row + i - 1
       local rendered = dashboard.lines[row] or ""
       local first = rendered:find(item.line, 1, true) or 1
       local col = first - 1
@@ -152,6 +162,9 @@ function M.setup(opts)
       extmark.id = virtual_ids[i]
       virtual_opts[i] = extmark
       virtual_ids[i] = vim.api.nvim_buf_set_extmark(dashboard.buf, namespace, row - 1, col, extmark)
+        last_lines[i], last_segments[i] = item.line, item.segments
+        last_filters[i], last_glows[i] = item.filter, item.glow
+      end
     end
   end
 
@@ -176,6 +189,7 @@ function M.setup(opts)
     padding = 4,
     render = function(next_dashboard, pos)
       dashboard, start_row = next_dashboard, pos[1]
+      last_lines, last_segments, last_filters, last_glows = {}, {}, {}, {}
       vim.schedule(apply_highlights)
     end,
   }
