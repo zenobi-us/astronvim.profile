@@ -43,6 +43,8 @@ function M.setup(opts)
   local start_row
   local plain = {}
   local text = { { "" } }
+  local virtual_lines = {}
+  local virtual_opts = {}
 
   local function geometry_changed(previous, next_frame)
     if not previous or #previous ~= #next_frame then return true end
@@ -94,24 +96,19 @@ function M.setup(opts)
         or ""
       local first = rendered:find(item.line, 1, true) or 1
       local col = first - 1
-      local mark_col, mark_end, mark_hl
-      for _, segment in ipairs(item.segments) do
-        local next_col = col + #segment.text
+      local chunks = virtual_lines[i] or {}
+      virtual_lines[i] = chunks
+      for j, segment in ipairs(item.segments) do
         local hl = highlight(logo.filter_color(segment.color, item.filter), item.glow)
-        if segment.visible and hl == mark_hl then
-          mark_end = next_col
-        else
-          if mark_hl and mark_end > mark_col then
-            vim.api.nvim_buf_add_highlight(dashboard.buf, namespace, mark_hl, row - 1, mark_col, mark_end)
-          end
-          mark_col, mark_end = col, next_col
-          mark_hl = segment.visible and hl or nil
-        end
-        col = next_col
+        local chunk = chunks[j] or {}
+        chunk[1], chunk[2] = segment.text, segment.visible and hl or nil
+        chunks[j] = chunk
       end
-      if mark_hl and mark_end > mark_col then
-        vim.api.nvim_buf_add_highlight(dashboard.buf, namespace, mark_hl, row - 1, mark_col, mark_end)
-      end
+      for j = #item.segments + 1, #chunks do chunks[j] = nil end
+      local extmark = virtual_opts[i] or { virt_text_pos = "overlay", hl_mode = "replace" }
+      extmark.virt_text = chunks
+      virtual_opts[i] = extmark
+      vim.api.nvim_buf_set_extmark(dashboard.buf, namespace, row - 1, col, extmark)
     end
   end
 
