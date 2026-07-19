@@ -10,11 +10,13 @@ local function parse_line(line)
   local function append(text)
     if text == "" then return end
     plain[#plain + 1] = text
+    local visible = text:find("%S") ~= nil
     local previous = segments[#segments]
     if previous and previous.color == color then
       previous.text = previous.text .. text
+      previous.visible = previous.visible or visible
     else
-      segments[#segments + 1] = { text = text, color = color }
+      segments[#segments + 1] = { text = text, color = color, visible = visible }
     end
   end
 
@@ -46,7 +48,7 @@ local function parse_line(line)
 
   local text = table.concat(plain)
   assert(not text:find("\27", 1, true), "unsupported ANSI escape sequence")
-  if #segments == 0 then segments[1] = { text = "" } end
+  if #segments == 0 then segments[1] = { text = "", visible = false } end
   return text, segments
 end
 

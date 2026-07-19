@@ -85,7 +85,7 @@ end
 local function glitch_segments(segments, offset)
   if offset == 0 then return segments end
   if offset > 0 then
-    local shifted = { { text = (" "):rep(offset) } }
+    local shifted = { { text = (" "):rep(offset), visible = false } }
     for _, segment in ipairs(segments) do shifted[#shifted + 1] = segment end
     return shifted
   end
@@ -97,11 +97,12 @@ local function glitch_segments(segments, offset)
     if remove >= #text then
       remove = remove - #text
     else
-      shifted[#shifted + 1] = { text = text:sub(remove + 1), color = segment.color }
+      local clipped = text:sub(remove + 1)
+      shifted[#shifted + 1] = { text = clipped, color = segment.color, visible = clipped:find("%S") ~= nil }
       remove = 0
     end
   end
-  if #shifted == 0 then shifted[1] = { text = "" } end
+  if #shifted == 0 then shifted[1] = { text = "", visible = false } end
   return shifted
 end
 

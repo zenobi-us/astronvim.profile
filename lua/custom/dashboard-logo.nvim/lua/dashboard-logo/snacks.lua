@@ -65,7 +65,7 @@ function M.setup(opts)
       for _, segment in ipairs(item.segments) do
         local next_col = col + #segment.text
         local hl = highlight(logo.filter_color(segment.color, item.filter), item.glow)
-        if hl and next_col > col and segment.text:find("%S") then
+        if hl and next_col > col and segment.visible then
           vim.api.nvim_buf_set_extmark(dashboard.buf, namespace, row - 1, col, {
             end_col = next_col,
             hl_group = hl,
