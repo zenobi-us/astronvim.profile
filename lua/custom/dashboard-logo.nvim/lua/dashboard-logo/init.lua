@@ -21,20 +21,28 @@ local function rgb(color)
   return tonumber(red, 16), tonumber(green, 16), tonumber(blue, 16)
 end
 
+local filtered_colors = {}
+
 ---@param source? string
 ---@param filter? string
 ---@return string?
 function M.filter_color(source, filter)
   if not filter then return source end
-  local red, green, blue = rgb(source or "#ffffff")
+  source = source or "#ffffff"
+  local key = source .. filter
+  if filtered_colors[key] then return filtered_colors[key] end
+
+  local red, green, blue = rgb(source)
   local filter_red, filter_green, filter_blue = rgb(filter)
   local luminance = (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255
   luminance = math.floor(luminance * 15 + 0.5) / 15
-  return ("#%02x%02x%02x"):format(
+  local color = ("#%02x%02x%02x"):format(
     math.floor(filter_red * luminance + 0.5),
     math.floor(filter_green * luminance + 0.5),
     math.floor(filter_blue * luminance + 0.5)
   )
+  filtered_colors[key] = color
+  return color
 end
 
 ---@param name? string
