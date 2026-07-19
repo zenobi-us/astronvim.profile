@@ -148,7 +148,7 @@ function M.setup(opts)
         end
       end
       for j = length + 1, #chunks do chunks[j] = nil end
-      local extmark = virtual_opts[i] or { virt_text_pos = "overlay", hl_mode = "replace" }
+      local extmark = virtual_opts[i] or { virt_text_pos = "overlay" }
       extmark.virt_text = chunks
       virtual_opts[i] = extmark
       vim.api.nvim_buf_set_extmark(dashboard.buf, namespace, row - 1, col, extmark)
