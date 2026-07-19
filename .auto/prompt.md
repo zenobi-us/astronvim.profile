@@ -89,6 +89,9 @@ Prefer changes in `snacks.lua`; measured evidence says full redraw and per-segme
 - Kept: runtime merge of adjacent equal-highlight chunks using reused chunk tables.
 - Kept: removed redundant `hl_mode = "replace"`; Neovim default is already replace.
 - Discarded: parser-level whitespace compaction (broke public segment color contract), shade-based chunk cache, display visibility deletion, span caches, numeric loops, localized API upvalues, generic allocation reuse.
-- Current best: 0.997% CPU, 11.21 delivered FPS, 0 full redraw FPS, ~38 MiB max RSS. Improvement versus frame-aware baseline: ~75.9% CPU and ~27% RSS.
-- Measured idle Neovim floor is roughly 0.16–0.35% CPU. Remaining animation overhead is about 0.65–0.85 percentage points.
+- Kept: line-level virtual extmarks now update by ID. ID reuse was bad at 841 marks but beneficial at 35 marks.
+- Kept: `dashboard.lines` is guaranteed after `item.render`; deleted unreachable buffer-read fallback.
+- Discarded: preallocation, IDs stored in mixed option tables, blank-line skipping, whole-namespace clear, cached spans/columns, and local API upvalues.
+- Current best: 0.957% CPU, 11.21 delivered FPS, 0 full redraw FPS, ~37 MiB max RSS. Improvement versus frame-aware baseline: ~76.8% CPU and ~28.5% RSS.
+- Measured idle Neovim floor is roughly 0.16–0.35% CPU. Remaining animation overhead is about 0.6–0.8 percentage points.
 - Current run-to-run noise around the best is roughly 2–8%; require material gains or repeated confirmation.

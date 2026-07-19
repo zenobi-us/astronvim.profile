@@ -23,8 +23,8 @@ local function highlight(color, glow)
 
   local name = "DashboardLogo" .. color:sub(2) .. (glow and "Glow" or "")
   vim.api.nvim_set_hl(0, name, { fg = color, ctermfg = glow and 120 or 37 })
-  highlights[key] = name
-  return name
+  highlights[key] = vim.api.nvim_get_hl_id_by_name(name)
+  return highlights[key]
 end
 
 function M.stop()
