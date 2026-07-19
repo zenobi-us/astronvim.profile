@@ -41,6 +41,7 @@ function M.setup(opts)
   local frame
   local dashboard
   local start_row
+  local visibility_ticks = 0
   local plain = {}
   local text = { { "" } }
   local virtual_lines = {}
@@ -183,10 +184,12 @@ function M.setup(opts)
     if _G.snacks_dashboard_logo_timer then return end
     _G.snacks_dashboard_logo_timer = vim.uv.new_timer()
     _G.snacks_dashboard_logo_timer:start(animation.interval, animation.interval, vim.schedule_wrap(function()
-      if not dashboard_visible() then
+      visibility_ticks = visibility_ticks + 1
+      if (not dashboard or visibility_ticks >= 4) and not dashboard_visible() then
         M.stop()
         return
       end
+      if visibility_ticks >= 4 then visibility_ticks = 0 end
       animation.tick()
     end))
   end
