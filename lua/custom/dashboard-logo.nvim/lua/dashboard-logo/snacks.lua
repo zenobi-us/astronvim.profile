@@ -45,6 +45,7 @@ function M.setup(opts)
   local text = { { "" } }
   local virtual_lines = {}
   local virtual_opts = {}
+  local virtual_ids = {}
   local chunk_cache = {}
 
   local function geometry_changed(previous, next_frame)
@@ -124,7 +125,6 @@ function M.setup(opts)
 
   local function apply_highlights()
     if not dashboard or not start_row or not vim.api.nvim_buf_is_valid(dashboard.buf) then return end
-    vim.api.nvim_buf_clear_namespace(dashboard.buf, namespace, start_row - 1, start_row - 1 + #frame)
     for i, item in ipairs(frame) do
       local row = start_row + i - 1
       local rendered = dashboard.lines[row] or ""
@@ -148,8 +148,9 @@ function M.setup(opts)
       for j = length + 1, #chunks do chunks[j] = nil end
       local extmark = virtual_opts[i] or { virt_text_pos = "overlay" }
       extmark.virt_text = chunks
+      extmark.id = virtual_ids[i]
       virtual_opts[i] = extmark
-      vim.api.nvim_buf_set_extmark(dashboard.buf, namespace, row - 1, col, extmark)
+      virtual_ids[i] = vim.api.nvim_buf_set_extmark(dashboard.buf, namespace, row - 1, col, extmark)
     end
   end
 
