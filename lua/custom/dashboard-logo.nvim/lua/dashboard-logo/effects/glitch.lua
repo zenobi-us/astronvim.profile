@@ -82,27 +82,37 @@ local function glitch_line(line, offset)
   return line
 end
 
+local shifted_segments = setmetatable({}, { __mode = "k" })
+
 local function glitch_segments(segments, offset)
   if offset == 0 then return segments end
-  if offset > 0 then
-    local shifted = { { text = (" "):rep(offset), visible = false } }
-    for _, segment in ipairs(segments) do shifted[#shifted + 1] = segment end
-    return shifted
+  local offsets = shifted_segments[segments]
+  if not offsets then
+    offsets = {}
+    shifted_segments[segments] = offsets
   end
+  if offsets[offset] then return offsets[offset] end
 
-  local shifted = {}
-  local remove = -offset
-  for _, segment in ipairs(segments) do
-    local text = segment.text
-    if remove >= #text then
-      remove = remove - #text
-    else
-      local clipped = text:sub(remove + 1)
-      shifted[#shifted + 1] = { text = clipped, color = segment.color, visible = clipped:find("%S") ~= nil }
-      remove = 0
+  local shifted
+  if offset > 0 then
+    shifted = { { text = (" "):rep(offset), visible = false } }
+    for _, segment in ipairs(segments) do shifted[#shifted + 1] = segment end
+  else
+    shifted = {}
+    local remove = -offset
+    for _, segment in ipairs(segments) do
+      local text = segment.text
+      if remove >= #text then
+        remove = remove - #text
+      else
+        local clipped = text:sub(remove + 1)
+        shifted[#shifted + 1] = { text = clipped, color = segment.color, visible = clipped:find("%S") ~= nil }
+        remove = 0
+      end
     end
+    if #shifted == 0 then shifted[1] = { text = "", visible = false } end
   end
-  if #shifted == 0 then shifted[1] = { text = "", visible = false } end
+  offsets[offset] = shifted
   return shifted
 end
 

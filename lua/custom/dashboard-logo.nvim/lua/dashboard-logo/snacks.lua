@@ -51,7 +51,7 @@ function M.setup(opts)
   local last_segments = {}
   local last_filters = {}
   local last_glows = {}
-  local chunk_cache = {}
+  local chunk_cache = setmetatable({}, { __mode = "k" })
 
   local function geometry_changed(previous, next_frame)
     if not previous or #previous ~= #next_frame then return true end
@@ -93,13 +93,8 @@ function M.setup(opts)
     return true
   end
 
-  local function display_segments(line, item)
-    local lines = chunk_cache[line]
-    if not lines then
-      lines = {}
-      chunk_cache[line] = lines
-    end
-    if lines[item.line] then return lines[item.line] end
+  local function display_segments(item)
+    if chunk_cache[item.segments] then return chunk_cache[item.segments] end
 
     local result = {}
     local leading = ""
@@ -124,7 +119,7 @@ function M.setup(opts)
         result[1] = { text = leading, visible = false }
       end
     end
-    lines[item.line] = result
+    chunk_cache[item.segments] = result
     return result
   end
 
@@ -144,7 +139,7 @@ function M.setup(opts)
       local chunks = virtual_lines[i] or {}
       virtual_lines[i] = chunks
       local length = 0
-      for _, segment in ipairs(display_segments(i, item)) do
+      for _, segment in ipairs(display_segments(item)) do
         local hl = highlight(logo.filter_color(segment.color, item.filter), item.glow)
         local previous = chunks[length]
         if previous and previous[2] == hl then
