@@ -112,6 +112,29 @@ return {
 
         require("lspconfig")[server].setup(opts)
       end,
+      tombi = function(_, opts)
+        local configs = require "lspconfig.configs"
+        if not configs.tombi then
+          configs.tombi = {
+            default_config = {
+              cmd = { "tombi", "lsp" },
+              filetypes = { "toml" },
+              root_dir = require("lspconfig.util").root_pattern("tombi.toml", "pyproject.toml", ".git"),
+            },
+          }
+        end
+
+        local ok, codesettings = pcall(require, "codesettings")
+        if ok then
+          local existing_before_init = opts.before_init
+          opts.before_init = function(params, config)
+            codesettings.with_local_settings(config.name or "tombi", config)
+            if existing_before_init then existing_before_init(params, config) end
+          end
+        end
+
+        require("lspconfig").tombi.setup(opts)
+      end,
       -- the key is the server that is being setup with `lspconfig`
       -- rust_analyzer = false, -- setting a handler to false will disable the set up of that language server
       -- pyright = function(_, opts) require("lspconfig").pyright.setup(opts) end -- or a custom handler function can be passed

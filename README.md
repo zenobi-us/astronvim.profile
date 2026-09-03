@@ -48,7 +48,7 @@ Testing
 - **Testing**: neotest + neotest-vitest — run and debug tests inline
 - **Git**: octo.nvim, worktrees.nvim, codediff.nvim — GitHub interaction, git worktree management, and VSCode-style diffs
 - **Code Quality**: conform, none-ls, mason — formatting, linting, and tool management
-- **Language Support**: tombi — TOML language server with JSON schema-aware validation
+- **Language Support**: tombi — TOML language server with JSON schema-aware validation; mise task syntax highlighting for TOML, Bash, and KDL
 - **Debugging**: nvim-dap, nvim-dap-vscode-js — debugger integration with VS Code JavaScript adapters
 - **Code Search**: grug-far — find and replace with preview
 - **UI/UX**: neo-tree, scrollbar, symbol-usage, treesitter — file tree, dashboard polish, scroll position, and symbols
