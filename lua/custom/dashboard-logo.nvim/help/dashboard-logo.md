@@ -16,9 +16,10 @@ Standalone preview: >sh
   ./lua/custom/dashboard-logo.nvim/cli.lua --watch --color=#c678dd
 <
 
-The watch preview reloads the logo module every frame, so saved edits appear
-without restarting the command. It uses plain Lua and ANSI terminal colours;
-Neovim is not loaded. Press CTRL-C to stop it.
+The preview loads the logo module once and reuses parsed ANSI data in watch
+mode. Pass `--reload` while editing to reload modules before every frame. It
+uses plain Lua and ANSI terminal colours; Neovim is not loaded. Press CTRL-C
+to stop it.
 
 Logo data lives in ANSI files under `lua/dashboard-logo/logos/`. New logos
 must be added to `logos/init.lua`; select one with `setup { logo = "name" }`.

@@ -167,7 +167,8 @@ Use another effect or colour:
 | Option | Description |
 | --- | --- |
 | `-w`, `--watch` | Keep rendering frames until interrupted. |
+| `--reload` | Reload Lua modules before every frame (useful while editing). |
 | `--effect=NAME` | Select an effect. Defaults to `glitch`. |
 | `--color=#rrggbb` | Set glitch base colour. Defaults to the original green palette. |
 
-Watch mode reloads dashboard-logo Lua modules before every frame, allowing logo and effect edits without restarting the process. Press `Ctrl-C` to stop it.
+The CLI loads dashboard-logo once and reuses the parsed logo in watch mode, avoiding repeated ANSI parsing and module initialization. Pass `--reload` when developing logos or effects to reload the Lua modules before every frame. Press `Ctrl-C` to stop watch mode.
