@@ -51,6 +51,17 @@ return {
         },
       }
 
+      -- Snacks scope can race markdown's injected treesitter parse and call
+      -- `TSNode:range()` on a node that is no longer present. Research notes
+      -- are generated markdown, so they do not need scope tracking.
+      local scope_filter = opts.scope and opts.scope.filter
+      opts.scope = opts.scope or {}
+      opts.scope.filter = function(bufnr)
+        local path = vim.api.nvim_buf_get_name(bufnr)
+        if path:match("/%.memory/research/") then return false end
+        return scope_filter == nil or scope_filter(bufnr)
+      end
+
       return opts
     end,
   },
