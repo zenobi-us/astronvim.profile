@@ -51,7 +51,7 @@ Testing
 - **Language Support**: tombi — TOML language server with JSON schema-aware validation; mise task syntax highlighting for TOML, Bash, and KDL
 - **Debugging**: nvim-dap, nvim-dap-vscode-js — debugger integration with VS Code JavaScript adapters
 - **Code Search**: grug-far — find and replace with preview
-- **UI/UX**: neo-tree, scrollbar, symbol-usage, treesitter — file tree, dashboard polish, scroll position, and symbols
+- **UI/UX**: neo-tree, scrollbar, symbol-usage, treesitter — file tree, dashboard polish, scroll position, symbols, and safe native highlighting for generated research notes
 - **Terminal**: toggleterm — floating terminal toggle
 
 ## Keymaps
