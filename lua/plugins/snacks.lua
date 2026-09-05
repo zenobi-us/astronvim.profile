@@ -56,6 +56,8 @@ return {
       -- are generated markdown, so they do not need scope tracking.
       local scope_filter = opts.scope and opts.scope.filter
       opts.scope = opts.scope or {}
+      opts.scope.treesitter = opts.scope.treesitter or {}
+      opts.scope.treesitter.injections = false
       opts.scope.filter = function(bufnr)
         local path = vim.api.nvim_buf_get_name(bufnr)
         if path:match("/%.memory/research/") then return false end
