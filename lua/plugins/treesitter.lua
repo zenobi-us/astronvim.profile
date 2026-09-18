@@ -1,10 +1,10 @@
--- Treesitter for syntax parsing and highlighting
+-- Plugin: tree-sitter-manager.nvim
+-- Description: Install and manage Tree-sitter parsers on Neovim 0.12+
+-- URL: https://github.com/romus204/tree-sitter-manager.nvim
 ---@type LazySpec
 return {
-  "nvim-treesitter/nvim-treesitter",
-  branch = "main",
+  "romus204/tree-sitter-manager.nvim",
   lazy = false,
-  build = ":TSUpdate",
   opts = {
     ensure_installed = {
       "lua",
@@ -16,11 +16,8 @@ return {
       "markdown",
       "markdown_inline",
     },
-    highlight = {
-      disable = function(_, bufnr)
-        return vim.bo[bufnr].filetype == "markdown"
-      end,
-    },
+    nohighlight = { "markdown" },
+    auto_install = false,
   },
   init = function()
     require("vim.treesitter.query").add_predicate("is-mise?", function(_, _, bufnr, _)
@@ -30,18 +27,9 @@ return {
     end, { force = true, all = false })
   end,
   config = function(_, opts)
-    local treesitter = require "nvim-treesitter.configs"
-    local start_treesitter = vim.treesitter.start
-    vim.treesitter.start = function(bufnr, ...)
-      bufnr = bufnr or vim.api.nvim_get_current_buf()
-      if vim.bo[bufnr].filetype == "markdown" then return false end
-      return start_treesitter(bufnr, ...)
-    end
-    treesitter.setup(opts)
-    -- Neovim 0.12 can leave a stale Markdown injection node while a buffer
-    -- is being parsed. The treesitter highlighter then calls `range()` on
-    -- that node during redraw, so use Vim's native Markdown syntax
-    -- highlighting instead.
+    require("tree-sitter-manager").setup(opts)
+
+    -- Generated research notes use Vim's native Markdown highlighting.
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "markdown",
       callback = function(args)

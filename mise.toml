@@ -1,3 +1,4 @@
 [tools]
 glow = "latest"
 "ubi:sst/opencode" = { version = "latest", matching_regex = 'x64\.(tar\.gz|zip)$', matching = '(\.tar\.gz|\.zip)$' }
+"aqua:tree-sitter/tree-sitter" = "latest"
