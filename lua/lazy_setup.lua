@@ -15,7 +15,7 @@ require("lazy").setup({
   { import = "plugins" },
 } --[[@as LazySpec]], {
   -- Configure any other `lazy.nvim` configuration options here
-  install = { colorscheme = { "astrotheme", "habamax" } },
+  install = { colorscheme = { "astrotheme", "mono-slate" } },
   ui = { backdrop = 100 },
   dev = {
     -- a function to return the local user nvim config path: <nvimconfig>/lua/custom
