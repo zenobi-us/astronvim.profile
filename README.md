@@ -42,7 +42,7 @@ Testing
 
 ## Plugins
 
-- **AstroNvim Core**: astrocore, astrolsp, astroui — base IDE framework with LSP integration and always-on word wrapping
+- **AstroNvim Core**: astrocore, astrolsp, astroui — base IDE framework with native `vim.lsp.config` integration, capability-aware LSP keymaps, and always-on word wrapping
 - **Search & Navigation**: fzf-lua, Snacks.nvim, dashboard-logo.nvim — fuzzy finding, cached dashboard-scoped CRT logo animation, theme-derived colour palettes, terminal previews, selectable logo assets, and command/keymap discovery
 - **AI Coding**: CodeCompanion — AI pair programming with img-clip for image insertion, GitHub Copilot — AI code suggestions
 - **Testing**: neotest + neotest-vitest — run and debug tests inline
@@ -51,7 +51,7 @@ Testing
 - **Language Support**: tombi — TOML language server with JSON schema-aware validation; mise task syntax highlighting for TOML, Bash, and KDL
 - **Debugging**: nvim-dap, nvim-dap-vscode-js — debugger integration with VS Code JavaScript adapters
 - **Code Search**: grug-far — find and replace with preview
-- **UI/UX**: neo-tree, scrollbar, symbol-usage, tree-sitter-manager.nvim — file tree, dashboard polish, scroll position, symbols, and safe native highlighting for generated research notes
+- **UI/UX**: neo-tree, scrollbar, symbol-usage, tree-sitter-manager.nvim — file tree, dashboard polish, scroll position, symbols, and native Tree-sitter parser management; AstroNvim's incompatible legacy nvim-treesitter integration is disabled
 - **Terminal**: toggleterm — floating terminal toggle
 
 ## Keymaps

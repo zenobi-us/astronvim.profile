@@ -7,6 +7,7 @@ return {
   "AstroNvim/astrolsp",
   ---@type AstroLSPOpts
   opts = {
+    native_lsp_config = true,
     -- Configuration table of features provided by AstroLSP
     features = {
       codelens = false, -- enable/disable codelens refresh on start
@@ -97,47 +98,6 @@ return {
         -- Requires a graphql.config.ts/js/yaml in project root
         filetypes = { "graphql", "gql", "typescriptreact", "javascriptreact", "typescript", "javascript" },
       },
-    },
-    -- customize how language servers are attached
-    handlers = {
-      function(server, opts)
-        local ok, codesettings = pcall(require, "codesettings")
-        if ok then
-          local existing_before_init = opts.before_init
-          opts.before_init = function(params, config)
-            codesettings.with_local_settings(config.name or server, config)
-            if existing_before_init then existing_before_init(params, config) end
-          end
-        end
-
-        require("lspconfig")[server].setup(opts)
-      end,
-      tombi = function(_, opts)
-        local configs = require "lspconfig.configs"
-        if not configs.tombi then
-          configs.tombi = {
-            default_config = {
-              cmd = { "tombi", "lsp" },
-              filetypes = { "toml" },
-              root_dir = require("lspconfig.util").root_pattern("tombi.toml", "pyproject.toml", ".git"),
-            },
-          }
-        end
-
-        local ok, codesettings = pcall(require, "codesettings")
-        if ok then
-          local existing_before_init = opts.before_init
-          opts.before_init = function(params, config)
-            codesettings.with_local_settings(config.name or "tombi", config)
-            if existing_before_init then existing_before_init(params, config) end
-          end
-        end
-
-        require("lspconfig").tombi.setup(opts)
-      end,
-      -- the key is the server that is being setup with `lspconfig`
-      -- rust_analyzer = false, -- setting a handler to false will disable the set up of that language server
-      -- pyright = function(_, opts) require("lspconfig").pyright.setup(opts) end -- or a custom handler function can be passed
     },
     -- Configure buffer local auto commands to add when attaching a language server
     autocmds = {
